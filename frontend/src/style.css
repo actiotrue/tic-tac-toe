@@ -1,4 +1,4 @@
-@import 'tailwindcss';
+@import "tailwindcss";
 
 :root {
   color-scheme: light dark;
@@ -9,7 +9,7 @@
   --border-color-transparent: #555c6950;
 }
 
-:root[style*='color-scheme: dark'] {
+:root[style*="color-scheme: dark"] {
   --bg-primary: #1a1a1a;
   --text-primary: #ffffff;
   --border-color: #020b1a;

@@ -1,58 +1,28 @@
-import api from '@/api/axiosConfig'
-import { type Player, type PlayerSummary } from '@/types'
-import type { GameResult } from './game'
+import type { GameDetailsResponse, PlayerResponse, PlayerUpdate, RankedPlayerResponse } from "@/types/api";
 
-type PlayerResponse = {
-  userId: string
-  username: string
-  imageUrl: string
-  rating: number
-  wins: number
-  losses: number
-  draws: number
-  createdAt: string
+import api from "@/api/axiosConfig";
+
+export async function getPlayerWithRank(): Promise<RankedPlayerResponse> {
+  const response = await api.get<RankedPlayerResponse>("/players/me/rank");
+  return response.data;
 }
 
-export type PlayerWithRank = PlayerResponse & {
-  rank: number
+export async function getPlayer(): Promise<PlayerResponse> {
+  const response = await api.get<PlayerResponse>("/players/me");
+  return response.data;
 }
 
-export type GameDetails = {
-  id: string
-  result: GameResult
-  duration: number
-  players: [
-    {
-      gameId: string
-      playerId: string
-      side: string
-      type: string
-      player: PlayerSummary | null
-    },
-  ]
+export async function updatePlayer(player: Partial<PlayerUpdate>): Promise<PlayerResponse> {
+  const response = await api.patch<PlayerResponse>("/players/me", player);
+  return response.data;
 }
 
-export const getPlayerWithRank = async (): Promise<PlayerWithRank> => {
-  const response = await api.get<PlayerWithRank>('/players/me/rank')
-  return response.data
+export async function getLeaderboard(): Promise<RankedPlayerResponse[]> {
+  const response = await api.get<RankedPlayerResponse[]>("/players/leaderboard");
+  return response.data;
 }
 
-export const getPlayer = async (): Promise<Player> => {
-  const response = await api.get<Player>('/players/me')
-  return response.data
-}
-
-export const updatePlayer = async (player: Partial<Player>): Promise<Player> => {
-  const response = await api.patch<Player>('/players/me', player)
-  return response.data
-}
-
-export const getLeaderboard = async (): Promise<PlayerWithRank[]> => {
-  const response = await api.get<PlayerWithRank[]>('/players/leaderboard')
-  return response.data
-}
-
-export const getRecentGames = async (): Promise<GameDetails[]> => {
-  const response = await api.get<GameDetails[]>('/players/me/recent-games')
-  return response.data
+export async function getRecentGames(): Promise<GameDetailsResponse[]> {
+  const response = await api.get<GameDetailsResponse[]>("/players/me/recent-games");
+  return response.data;
 }

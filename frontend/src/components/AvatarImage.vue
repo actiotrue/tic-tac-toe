@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import { AdvancedImage } from '@cloudinary/vue'
-import { getAvatar } from '@/cloudinary'
+import { AdvancedImage } from "@cloudinary/vue";
+import { getAvatar } from "@/cloudinary";
 
-const props = defineProps<{
-  imageUrl?: string
-  placeholder?: string
-  width?: number
-  height?: number
-}>()
+defineProps<{
+  imageUrl?: string;
+  placeholder?: string;
+  width?: number;
+  height?: number;
+}>();
 </script>
 
 <template>

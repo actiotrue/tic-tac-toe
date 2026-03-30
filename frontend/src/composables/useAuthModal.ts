@@ -1,17 +1,17 @@
-import { useRouter } from 'vue-router'
+import { useRouter } from "vue-router";
 
-export const useAuthModal = () => {
-  const router = useRouter()
+export function useAuthModal() {
+  const router = useRouter();
 
-  const openAuthModal = (method: 'signup' | 'login' = 'signup') => {
+  const openAuthModal = (method: "signup" | "login" = "signup") => {
     router.replace({
       query: {
         ...router.currentRoute.value.query,
-        modal: 'auth',
-        method: method,
+        modal: "auth",
+        method,
       },
-    })
-  }
+    });
+  };
 
-  return { openAuthModal: openAuthModal }
+  return { openAuthModal };
 }

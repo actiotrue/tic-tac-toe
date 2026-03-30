@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import type { Player } from '@/types'
-import AvatarImage from './AvatarImage.vue'
+import type { RankedPlayer } from "@/types/player";
+import AvatarImage from "./AvatarImage.vue";
 
-const props = defineProps<{
-  players: Player[]
-}>()
+defineProps<{
+  players: RankedPlayer[];
+}>();
 </script>
 
 <template>
@@ -12,17 +12,22 @@ const props = defineProps<{
     <table class="w-full border-collapse text-left">
       <thead class="top-0 z-10">
         <tr class="border-b border-gray-800 text-gray-400 text-sm uppercase tracking-wider">
-          <th class="py-2 px-2 font-medium w-16">Rank</th>
-          <th class="py-2 px-2 font-medium">Player</th>
-          <th class="py-2 px-2 font-medium text-right">Rating</th>
+          <th class="py-2 px-2 font-medium w-16">
+            Rank
+          </th>
+          <th class="py-2 px-2 font-medium">
+            Player
+          </th>
+          <th class="py-2 px-2 font-medium text-right">
+            Rating
+          </th>
         </tr>
       </thead>
       <tbody class="divide-y divide-gray-800/50">
         <tr v-for="player in players" :key="player.userId" class="transition-colors group">
           <td class="py-2 px-2">
             <span
-              :class="[
-                'inline-flex items-center justify-center w-8 h-8 rounded-full font-bold text-sm',
+              class="inline-flex items-center justify-center w-8 h-8 rounded-full font-bold text-sm" :class="[
                 player.rank === 1
                   ? 'bg-yellow-300'
                   : player.rank === 2

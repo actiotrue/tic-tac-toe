@@ -7,6 +7,9 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
+*.lock
+bun.lock
+
 node_modules
 .DS_Store
 dist
@@ -37,5 +40,7 @@ __screenshots__/
 
 # Vite
 *.timestamp-*-*.mjs
+
+
 
 .env

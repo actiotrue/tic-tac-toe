@@ -1,14 +1,19 @@
 <script setup lang="ts">
-import AuthModal from '@/components/AuthModal.vue'
-import { Menu, MenuButton, MenuItems, MenuItem } from '@headlessui/vue'
-import { ChevronDownIcon } from '@heroicons/vue/20/solid'
-import { useTheme } from '@/composables/theme'
-import { useAuth } from '@/composables/auth'
-import { useAuthModal } from '@/composables/useAuthModal'
+import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/vue";
+import { ChevronDownIcon } from "@heroicons/vue/20/solid";
+import AuthModal from "@/components/auth/AuthModal.vue";
+import { useAuthModal } from "@/composables/useAuthModal";
+import { useAuth } from "@/store/auth.store";
+import { useTheme } from "@/store/theme.store";
 
-const themeStore = useTheme()
-const authStore = useAuth()
-const { openAuthModal } = useAuthModal()
+const themeStore = useTheme();
+const authStore = useAuth();
+const { openAuthModal } = useAuthModal();
+
+async function logout() {
+  await authStore.logout();
+  window.location.reload();
+}
 </script>
 
 <template>
@@ -22,8 +27,8 @@ const { openAuthModal } = useAuthModal()
               class="flex items-center space-x-3 hover:opacity-80 transition-opacity"
             >
               <picture>
-                <source srcset="/logo.svg" media="(prefer-color-scheme: dark)" />
-                <img src="/logo.svg" alt="Tic Tac Toe Logo" class="w-12 h-12" />
+                <source srcset="/logo.svg" media="(prefer-color-scheme: dark)">
+                <img src="/logo.svg" alt="Tic Tac Toe Logo" class="w-12 h-12">
               </picture>
               <span class="text-xl font-bold"> Tic Tac Toe </span>
             </RouterLink>
@@ -31,8 +36,8 @@ const { openAuthModal } = useAuthModal()
 
           <div class="flex items-center space-x-4">
             <button
-              @click="themeStore.toggleTheme"
               class="p-2.5 rounded-full flex items-center space-x-2 cursor-pointer transition-all duration-300 hover:shadow-md group"
+              @click="themeStore.toggleTheme"
             >
               <div class="relative w-5 h-5">
                 <svg
@@ -55,14 +60,14 @@ const { openAuthModal } = useAuthModal()
 
             <div v-if="!authStore.isLoggedIn" class="flex items-center space-x-3">
               <button
-                @click="openAuthModal('login')"
                 class="cursor-pointer px-4 py-2 text-sm font-medium hover:text-gray-400"
+                @click="openAuthModal('login')"
               >
                 Log in
               </button>
               <button
-                @click="openAuthModal('signup')"
                 class="cursor-pointer px-4 py-2 text-sm font-medium rounded-lg transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
+                @click="openAuthModal('signup')"
               >
                 Sign up
               </button>
@@ -71,7 +76,7 @@ const { openAuthModal } = useAuthModal()
               <Menu as="div" class="relative inline-block text-left">
                 <div>
                   <MenuButton
-                    class="cursor-pointer text-white inline-flex w-full justify-center rounded-md px-4 py-2 bg-violet-400 font-bold  hover:opacity-90 hover:transition-opacity focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75"
+                    class="cursor-pointer text-white inline-flex w-full justify-center rounded-md px-4 py-2 bg-violet-400 font-bold hover:opacity-90 hover:transition-opacity focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75"
                   >
                     Profile
                     <ChevronDownIcon
@@ -96,9 +101,8 @@ const { openAuthModal } = useAuthModal()
                       <MenuItem v-slot="{ active }">
                         <RouterLink
                           to="/profile"
-                          :class="[
+                          class="group flex w-full items-center rounded-md px-2 py-2 text-sm" :class="[
                             active ? 'bg-violet-500 text-white' : 'text-gray-900',
-                            'group flex w-full items-center rounded-md px-2 py-2 text-sm',
                           ]"
                         >
                           Profile
@@ -108,11 +112,10 @@ const { openAuthModal } = useAuthModal()
                     <div class="px-1 py-1">
                       <MenuItem v-slot="{ active }">
                         <button
-                          :class="[
+                          class="cursor-pointer group flex w-full items-center rounded-md px-2 py-2 text-sm" :class="[
                             active ? 'bg-violet-500 text-white' : 'text-gray-900',
-                            'cursor-pointer group flex w-full items-center rounded-md px-2 py-2 text-sm',
                           ]"
-                          @click="authStore.logout"
+                          @click="logout"
                         >
                           Sign out
                         </button>
@@ -128,13 +131,15 @@ const { openAuthModal } = useAuthModal()
     </nav>
     <main class="grow container mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div class="max-w-6xl mx-auto">
-        <slot></slot>
+        <slot />
       </div>
     </main>
     <footer class="border-t border-custom-transparent">
       <div class="container mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex flex-col items-center justify-center space-y-4 mt-4 mb-4 text-center">
-          <p class="text-sm">Created with ❤️ by Jud1k</p>
+          <p class="text-sm">
+            Created with ❤️ by Jud1k
+          </p>
           <a
             href="https://github.com/Jud1k/tic-tac-toe"
             target="_blank"

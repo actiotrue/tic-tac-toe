@@ -1,25 +1,25 @@
 <script lang="ts" setup>
-import GameVsAI from '@/components/Game/GameVsAI.vue'
-import GameVsPlayer from '@/components/Game/GameVsPlayer.vue'
-import AppLayout from '@/layouts/AppLayout.vue'
-import { computed } from 'vue'
-import { useRoute } from 'vue-router'
+import { computed } from "vue";
+import { useRoute } from "vue-router";
+import GameVsAI from "@/components/game/GameVsAI.vue";
+import GameVsPlayer from "@/components/game/GameVsPlayer.vue";
+import AppLayout from "@/layouts/AppLayout.vue";
 
-type GameMode = 'pve' | 'pvp'
+type GameMode = "pve" | "pvp";
 
-const route = useRoute()
+const route = useRoute();
 
 const mode = computed<GameMode>(() => {
-  const m = route.query.mode
-  return m === 'pvp' || m === 'pve' ? m : 'pve'
-})
+  const m = route.query.mode;
+  return m === "pvp" || m === "pve" ? m : "pve";
+});
 </script>
 
 <template>
   <AppLayout>
     <div class="container">
-      <GameVsAI v-if="mode == 'pve'" />
-      <GameVsPlayer v-else />
+      <GameVsPlayer v-if="mode === 'pvp'" />
+      <GameVsAI v-else />
     </div>
   </AppLayout>
 </template>
