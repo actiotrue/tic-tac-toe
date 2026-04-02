@@ -11,7 +11,7 @@ WORKDIR /app/frontend
 
 RUN bun install
 
-COPY ./frontend /app/frontend
+COPY frontend /app/frontend
 
 RUN bun run build
 
