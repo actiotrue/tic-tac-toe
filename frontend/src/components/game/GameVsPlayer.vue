@@ -1,10 +1,13 @@
 <script lang="ts" setup>
 import { computed, onBeforeUnmount, onMounted } from "vue";
 import { useMatchmaking } from "@/composables/useMatchmaking";
+import quizData from "../../questions.json";
 import { GameStatus } from "../../types/game";
 import Spinner from "../ui/Spinner.vue";
 import GameBoard from "./GameBoard.vue";
+import Quiz from "./Quiz.vue";
 import SearchingTimer from "./SearchingTimer.vue";
+import TurnTimer from "./TurnTimer.vue";
 
 const {
   board,
@@ -14,6 +17,7 @@ const {
   winningLine,
   gameStatus,
   error,
+  secondsLeft,
   handleGame,
   makeMove,
   leaveGame,
@@ -48,17 +52,30 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div class="">
-    <div v-if="error" class="text-lg text-red-500">
+  <div class="flex flex-col items-center justify-center min-h-[80vh] p-4">
+    <div v-if="error" class="p-4 mb-4 text-red-500 bg-red-100 rounded-lg animate-pulse">
       {{ error }}
     </div>
-    <div v-else-if="gameStatus === GameStatus.Waiting" class="flex items-center justify-center">
+    <div v-if="gameStatus === GameStatus.Waiting" class="flex flex-col items-center gap-4">
       <Spinner size="lg" />
+      <span class="text-gray-400">Подключение к серверу...</span>
     </div>
-    <div v-else-if="gameStatus === GameStatus.Searching" class="flex items-center justify-center">
-      <SearchingTimer />
+    <div v-else-if="gameStatus === GameStatus.Searching" class="w-full max-w-md space-y-6">
+      <div class="flex flex-col items-center p-6 timer-background rounded-2xl backdrop-blur-sm">
+        <SearchingTimer />
+        <p class="mt-2 text-sm text-gray-400">
+          Ищем соперника...
+        </p>
+      </div>
+      <Quiz :questions="quizData" />
     </div>
-    <div v-else-if="gameStatus === GameStatus.Playing || gameStatus === GameStatus.Finished">
+    <div v-else-if="gameStatus === GameStatus.Playing || gameStatus === GameStatus.Finished" class="w-full">
+      <div class="mb-4">
+        <TurnTimer v-if="gameStatus === GameStatus.Playing" :seconds="secondsLeft" />
+        <span v-if="gameStatus === GameStatus.Finished" class="flex items-center justify-center text-lg">
+          Игра окончена
+        </span>
+      </div>
       <GameBoard
         :board="board"
         :current-player="currentPlayer"
@@ -71,3 +88,9 @@ onBeforeUnmount(() => {
     </div>
   </div>
 </template>
+
+<style scoped>
+.timer-background {
+  background: #2a2a2a;
+}
+</style>

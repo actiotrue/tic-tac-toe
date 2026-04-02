@@ -11,6 +11,6 @@
     "ARGV"
   ],
   "python.analysis.extraPaths": [
-    "./services/backend"
+    "./services/api-service"
   ],
 }

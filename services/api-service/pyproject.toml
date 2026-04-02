@@ -1,0 +1,40 @@
+[project]
+name = "backend_tic-tac-toe"
+version = "0.1.0"
+description = "Backend for tic-tac-toe web game"  
+readme = "README.md"
+requires-python = ">=3.14"
+dependencies = [
+    "asyncpg>=0.31.0",
+    "fastapi>=0.128.0",
+    "loguru>=0.7.3",
+    "pwdlib[argon2]>=0.3.0",
+    "pydantic-settings>=2.12.0",
+    "pyjwt>=2.11.0",
+    "python-multipart>=0.0.22",
+    "redis>=7.1.1",
+    "uvicorn>=0.40.0",
+    "websockets>=16.0",
+]
+
+[dependency-groups]
+dev = [
+    "httpx>=0.28.1",
+    "pyright>=1.1.408",
+    "pytest>=9.0.2",
+    "pytest-asyncio>=1.3.0",
+    "ruff>=0.14.14",
+]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+pythonpath = ["."]
+testpaths = ["tests"]
+
+[tool.pyright]
+include = ["app"]
+exclude = ["**/node_modules", "**/.*", "**/__pycache__"]
+typeCheckingMode = "standard"
+pythonVersion = "3.14"
+reportMissingImports = true
+reportMissingTypeStubs = false

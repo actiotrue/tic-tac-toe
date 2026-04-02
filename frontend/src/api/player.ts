@@ -17,12 +17,22 @@ export async function updatePlayer(player: Partial<PlayerUpdate>): Promise<Playe
   return response.data;
 }
 
-export async function getLeaderboard(): Promise<RankedPlayerResponse[]> {
-  const response = await api.get<RankedPlayerResponse[]>("/players/leaderboard");
+export async function getLeaderboard(start: number, end: number): Promise<RankedPlayerResponse[]> {
+  const response = await api.get<RankedPlayerResponse[]>("/players/leaderboard", {
+    params: {
+      start,
+      end,
+    },
+  });
   return response.data;
 }
 
-export async function getRecentGames(): Promise<GameDetailsResponse[]> {
-  const response = await api.get<GameDetailsResponse[]>("/players/me/recent-games");
+export async function getRecentGames(limit: number, offset: number): Promise<GameDetailsResponse[]> {
+  const response = await api.get<GameDetailsResponse[]>("/players/me/recent-games", {
+    params: {
+      limit,
+      offset,
+    },
+  });
   return response.data;
 }
