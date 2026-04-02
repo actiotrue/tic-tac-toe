@@ -12,7 +12,6 @@ const pinia = createPinia();
 const app = createApp(App);
 
 app.use(pinia);
-app.use(router);
 app.use(Vue3Toastify, {
   position: toast.POSITION.TOP_CENTER,
   duration: 3000,
@@ -27,5 +26,6 @@ app.use(Vue3Toastify, {
 const authStore = useAuth();
 
 authStore.initAuth().finally(() => {
+  app.use(router);
   app.mount("#app");
 });

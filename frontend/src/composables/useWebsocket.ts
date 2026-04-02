@@ -15,8 +15,12 @@ export function useWebSocket<T = any>(url: string) {
       socket.onopen = options.onOpen;
     if (options?.onError)
       socket.onerror = () => options.onError!("Error while connecting to the server");
-    if (options?.onClose)
-      socket.onclose = (event: CloseEvent) => options.onClose!(event.reason);
+    if (options?.onClose) {
+      socket.onclose = (event: CloseEvent) => {
+        const reason = event.reason?.trim();
+        options.onClose!(reason || `Connection closed (code ${event.code})`);
+      };
+    }
 
     socket.onmessage = (event) => {
       try {

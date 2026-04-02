@@ -6,7 +6,7 @@ from fastapi import (
     status,
 )
 
-from app.api.deps import GameServiceDep, InternalServiceKeyDep
+from app.api.deps import CurrentUserDep, GameServiceDep, InternalServiceKeyDep
 from app.exceptions import InvalidGamePlayersError
 from app.schemas.game import GameCreate, GameRead
 
@@ -34,9 +34,25 @@ async def get_game_by_id(
     return game
 
 
+@router.post("/service", response_model=GameRead, status_code=status.HTTP_201_CREATED)
+async def create_game_internal(
+    _: InternalServiceKeyDep,
+    game_service: GameServiceDep,
+    game_in: GameCreate,
+) -> GameRead:
+    try:
+        game = await game_service.create_game(game_in)
+        return game
+    except InvalidGamePlayersError:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Not enough players to create a game",
+        )
+
+
 @router.post("/", response_model=GameRead, status_code=status.HTTP_201_CREATED)
 async def create_game(
-    _: InternalServiceKeyDep,
+    current_user: CurrentUserDep,
     game_service: GameServiceDep,
     game_in: GameCreate,
 ) -> GameRead:

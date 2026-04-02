@@ -1,0 +1,81 @@
+services:
+  fastapi:
+    build: ./services/api-service
+    container_name: fastapi-service
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: ${DATABASE_URL}
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      INTERNAL_SERVICE_KEY: ${INTERNAL_SERVICE_KEY}
+      CLOUDINARY_BASE_IMAGE_PUBLIC_ID: ${CLOUDINARY_BASE_IMAGE_PUBLIC_ID}
+      REFRESH_TOKEN_EXPIRE_DAYS: ${REFRESH_TOKEN_EXPIRE_DAYS}
+      ACCESS_TOKEN_EXPIRE_MINUTES: ${ACCESS_TOKEN_EXPIRE_MINUTES}
+      ALGORITHM: ${ALGORITHM}
+      SECRET_KEY: ${SECRET_KEY}
+    volumes:
+      - ./backend-fastapi:/app
+      - /app/__pycache__
+    expose:
+      - "8000"
+    depends_on:
+      - db
+      - redis
+    networks:
+      - app-network
+
+  go-service:
+    build: ./services/socket-server
+    container_name: go-service
+    restart: unless-stopped
+    environment:
+      GIN_MODE: release
+      REDIS_ADDR: redis:6379
+      FASTAPI_URL: http://fastapi:8000
+    expose:
+      - "8080"
+    depends_on:
+      - redis
+    networks:
+      - app-network
+
+  frontend:
+    build: ./frontend
+    container_name: vue-frontend
+    restart: unless-stopped
+    ports:
+      - "80:80"  # Изменил expose на ports, чтобы фронт был доступен в браузере
+    environment:
+      VITE_API_URL: "http://localhost:8000" # Должен быть доступен клиенту (браузеру)
+      VITE_CLOUDINARY_NAME: "dfs5mvxnz"
+      VITE_CLOUDINARY_API_SECRET: "FYBEEAia1zJy0UIvV2paQZEbSJc"
+      VITE_CLOUDINARY_API_KEY: "193954773367713"
+    networks:
+      - app-network
+
+  db:
+    image: postgres:15-alpine
+    container_name: postgres-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      POSTGRES_DB: ${POSTGRES_DB:-tic-tac-toe}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - app-network
+
+  redis:
+    image: redis:7-alpine
+    container_name: redis-cache
+    restart: unless-stopped
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  postgres_data:

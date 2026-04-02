@@ -1,9 +1,6 @@
 <script setup lang="ts">
-import type { RankedPlayer } from "@/types/player";
 import { GlobeAmericasIcon, PlayIcon, TrophyIcon, UserIcon } from "@heroicons/vue/24/solid";
-import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
-import { getLeaderboard } from "@/api/player";
 import Leaderboard from "@/components/Leaderboard.vue";
 import {
   CardContainer,
@@ -12,13 +9,9 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import Spinner from "@/components/ui/Spinner.vue";
 import { useAuthModal } from "@/composables/useAuthModal";
 import AppLayout from "@/layouts/AppLayout.vue";
 import { useAuth } from "@/store/auth.store";
-
-const topPlayers = ref<RankedPlayer[]>([]);
-const isLoading = ref<boolean>(false);
 
 const authStore = useAuth();
 
@@ -31,20 +24,6 @@ function startGame(mode: "pvp" | "pve") {
     query: { mode },
   });
 }
-
-async function fetchLeaderboard() {
-  isLoading.value = true;
-  try {
-    topPlayers.value = await getLeaderboard();
-  }
-  finally {
-    isLoading.value = false;
-  }
-}
-
-onMounted(async () => {
-  await fetchLeaderboard();
-});
 </script>
 
 <template>
@@ -122,13 +101,7 @@ onMounted(async () => {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div v-if="isLoading" class="flex justify-center items-center py-8">
-                <Spinner size="sm" />
-              </div>
-              <p v-else-if="topPlayers.length === 0" class="text-gray-400 text-center py-8">
-                Leaderboard content will be displayed here
-              </p>
-              <Leaderboard v-else :players="topPlayers" />
+              <Leaderboard />
             </CardContent>
           </CardContainer>
         </div>

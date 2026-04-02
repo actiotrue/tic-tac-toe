@@ -18,9 +18,6 @@ const emit = defineEmits<{
 
 <template>
   <div class="flex flex-col max-w-2xl mx-auto space-y-6">
-    <h1 class="font-semibold text-2xl text-center">
-      Game board
-    </h1>
     <CardContainer class="w-full">
       <CardHeader>
         <CardTitle class="text-center text-2xl font-bold">

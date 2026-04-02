@@ -47,17 +47,17 @@ class PlayerService:
                 await uow.users.update_username(player_id, player_in.username)
             return await uow.players.update(player_id, player_in)
 
-    async def get_leaderboard(self) -> list[PlayerWithRank]:
+    async def get_leaderboard(self,start:int,end:int) -> list[PlayerWithRank]:
         async with self.uow as uow:
-            player_ids = await uow.leaderboard.get_all()
+            player_ids = await uow.leaderboard.get_all(start,end)
             if not player_ids:
                 return []
             players = await uow.players.get_by_ids(player_ids)
             return [
-                PlayerWithRank(**player.to_dict(), rank=index + 1)
+                PlayerWithRank(**player.to_dict(), rank=start+index + 1)
                 for index, player in enumerate(players)
             ]
 
-    async def get_games_summary_by_player_id(self, player_id: uuid.UUID) -> list[Game]:
+    async def get_games_summary_by_player_id(self, player_id: uuid.UUID, limit: int, offset: int) -> list[Game]:
         async with self.uow as uow:
-            return await uow.games.get_games_summary_by_player_id(player_id)
+            return await uow.games.get_games_summary_by_player_id(player_id, limit, offset)

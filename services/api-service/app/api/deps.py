@@ -2,9 +2,9 @@ from pathlib import Path
 import jwt
 import asyncpg
 from typing import Annotated, Any, AsyncGenerator
-from fastapi import Depends, HTTPException, Header, Query, WebSocketException, status
+from fastapi import Depends, HTTPException, Header, status
 from fastapi.security import OAuth2PasswordBearer
-from jwt.exceptions import PyJWTError, ExpiredSignatureError
+
 from redis import Redis
 
 from app.core.database import database
@@ -89,39 +89,6 @@ async def get_current_user(
 
 
 CurrentUserDep = Annotated[UserReadWithoutPassword, Depends(get_current_user)]
-
-
-async def get_current_user_id_ws(token: str = Query(None)) -> str:
-    try:
-        payload = jwt.decode(
-            token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM]
-        )
-        player_id = payload.get("sub")
-        if not player_id:
-            raise WebSocketException(code=status.WS_1008_POLICY_VIOLATION)
-        return player_id
-    except ExpiredSignatureError:
-        raise WebSocketException(code=status.WS_1008_POLICY_VIOLATION)
-    except PyJWTError:
-        raise WebSocketException(code=status.WS_1008_POLICY_VIOLATION)
-
-
-# class RedisScripts:
-#     def __init__(self, redis_client: Redis):
-#         self.matchmaking = redis_client.register_script(
-#             (REDIS_SCRIPTS_DIR / "matchmaking.lua").read_text()
-#         )
-
-
-# scripts = RedisScripts(redis_client)
-
-
-# def get_redis_scripts():
-#     return scripts
-
-
-# RedisScriptsDep = Annotated[RedisScripts, Depends(get_redis_scripts())]
-
 
 def verify_internal_service_key(
     key: str = Header(alias="X-Internal-Service-Key"),

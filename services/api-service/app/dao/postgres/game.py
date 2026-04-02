@@ -53,7 +53,7 @@ class GameDao(SqlDaoBase):
         return game_players
 
     async def get_games_summary_by_player_id(
-        self, player_id: uuid.UUID, limit: int = 10
+        self, player_id: uuid.UUID, limit: int = 10, offset: int = 0
     ) -> list[Game]:
         query = """
         SELECT
@@ -91,9 +91,10 @@ class GameDao(SqlDaoBase):
         )
         GROUP BY g.id
         ORDER BY g.created_at DESC
-        LIMIT $2;
+        LIMIT $2
+        OFFSET $3
         """
-        rows = await self.db.fetch(query, player_id, limit)
+        rows = await self.db.fetch(query, player_id, limit, offset)
         print(rows)
         games = Game.from_rows(rows)
         logger.info(f"Found {len(games)} games")

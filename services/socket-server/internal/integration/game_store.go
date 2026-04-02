@@ -13,21 +13,21 @@ import (
 )
 
 type GameStoreClient struct {
-	BaseUrl string
+	BaseUrl    string
 	HttpClient *http.Client
-	ApiKey string
+	ApiKey     string
 }
 
 func NewGameStoreClient(baseUrl string, apiKey string) *GameStoreClient {
 	return &GameStoreClient{
-		BaseUrl: baseUrl,
+		BaseUrl:    baseUrl,
 		HttpClient: &http.Client{Timeout: 10 * time.Second},
-		ApiKey: apiKey,
+		ApiKey:     apiKey,
 	}
 }
 
 func (c *GameStoreClient) SaveGame(game matchmaking.Game) error {
-	if len(game.Players) < 2 {
+	if len(game.PlayerIds) < 2 {
 		return fmt.Errorf("not enough players to save game")
 	}
 
@@ -44,21 +44,21 @@ func (c *GameStoreClient) SaveGame(game matchmaking.Game) error {
 	}
 
 	finishedGame := dto.GameResultRequest{
-		Id: game.Id,
-		Result: gameResult,
+		Id:       game.Id,
+		Result:   gameResult,
 		Duration: int(time.Since(game.StartTime).Seconds()),
 		Players: []dto.Player{
 			{
-				GameId: game.Id,
-				PlayerId: game.Players[0].UserId,
-				Side: game.PlayerSide[game.Players[0]],
-				Type: "human",
+				GameId:   game.Id,
+				PlayerId: game.PlayerIds[0],
+				Side:     game.SideByUserId[game.PlayerIds[0]],
+				Type:     "human",
 			},
 			{
-				GameId: game.Id,
-				PlayerId: game.Players[1].UserId,
-				Side: game.PlayerSide[game.Players[1]],
-				Type: "human",
+				GameId:   game.Id,
+				PlayerId: game.PlayerIds[1],
+				Side:     game.SideByUserId[game.PlayerIds[1]],
+				Type:     "human",
 			},
 		},
 	}
@@ -69,7 +69,7 @@ func (c *GameStoreClient) SaveGame(game matchmaking.Game) error {
 		return err
 	}
 
-	req, err := http.NewRequest("POST", c.BaseUrl+"/api/v1/games/",  bytes.NewBuffer(payload))
+	req, err := http.NewRequest("POST", c.BaseUrl+"/api/v1/games/service", bytes.NewBuffer(payload))
 	if err != nil {
 		return err
 	}
@@ -81,7 +81,7 @@ func (c *GameStoreClient) SaveGame(game matchmaking.Game) error {
 		log.Println(err)
 		return err
 	}
-    defer resp.Body.Close()
+	defer resp.Body.Close()
 
 	if resp.StatusCode != 201 {
 		return fmt.Errorf("error saving game: %s", resp.Status)

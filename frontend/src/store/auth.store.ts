@@ -4,7 +4,7 @@ import { ref } from "vue";
 import * as authApi from "@/api/auth";
 
 export const useAuth = defineStore("auth", () => {
-  const isLoggedIn = ref<boolean>(localStorage.getItem("accessToken") !== null);
+  const isLoggedIn = ref<boolean>(false);
   const isLoading = ref<boolean>(false);
   const userId = ref<string | null>(null);
 
@@ -44,7 +44,6 @@ export const useAuth = defineStore("auth", () => {
     }
     finally {
       isLoading.value = false;
-      authApi.logout();
     }
   };
 

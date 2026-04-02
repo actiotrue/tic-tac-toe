@@ -1,12 +1,14 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"net/http"
 
 	"github.com/caarlos0/env/v11"
 	"github.com/joho/godotenv"
+	"github.com/redis/go-redis/v9"
 
 	"github.com/Jud1k/tic-tac-toe/internal/config"
 	"github.com/Jud1k/tic-tac-toe/internal/hub"
@@ -25,9 +27,22 @@ func main() {
 	}
 
 	gameStoreClient := integration.NewGameStoreClient(config.FastApiUrl, config.InternalServiceKey)
-	hub := hub.NewHub(gameStoreClient)
+
+	rdb := redis.NewClient(&redis.Options{
+		Addr:     config.RedisAddr,
+		Password: "",
+		DB:       0,
+	})
+	defer rdb.Close()
+	ctx := context.Background()
+	err := rdb.Ping(ctx).Err()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	hub := hub.NewHub(gameStoreClient, rdb)
 	go hub.Run()
-	
+
 	server := ws.Server{Config: config, Hub: hub}
 	http.HandleFunc("/api/v1/ws/game", server.HandleWs)
 	fmt.Println("Listening on port 8080")

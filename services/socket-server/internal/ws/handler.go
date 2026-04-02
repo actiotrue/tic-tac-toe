@@ -15,7 +15,7 @@ import (
 
 type Server struct {
 	Config config.Config
-	Hub *hub.Hub
+	Hub    *hub.Hub
 }
 
 var upgrader = websocket.Upgrader{
@@ -46,11 +46,11 @@ func (s *Server) HandleWs(w http.ResponseWriter, r *http.Request) {
 	}
 
 	client := &client.Client{
-		UserId: claims.UserId,
-		Conn: wsConn,
-		Send: make(chan []byte),
+		UserId:   claims.UserId,
+		Conn:     wsConn,
+		Send:     make(chan []byte),
 		Incoming: s.Hub.Incoming,
-		Done: s.Hub.Unregister,
+		Done:     s.Hub.Unregister,
 	}
 	s.Hub.Register <- client
 
