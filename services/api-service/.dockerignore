@@ -5,3 +5,7 @@ app.egg-info
 .coverage
 htmlcov
 .venv
+tests
+.pytest_cache
+.vscode
+.ruff_cache
