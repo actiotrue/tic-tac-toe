@@ -7,7 +7,6 @@ import (
 	"net/http"
 
 	"github.com/caarlos0/env/v11"
-	//"github.com/joho/godotenv"
 	"github.com/redis/go-redis/v9"
 
 	"github.com/Jud1k/tic-tac-toe/internal/config"
@@ -17,10 +16,6 @@ import (
 )
 
 func main() {
-     //	if err := godotenv.Load(); err != nil {
-     //		log.Fatal("Error loading .env file")
-     //	}
-
 	var config config.Config
 	if err := env.Parse(&config); err != nil {
 		log.Fatal("Parsing error: ", err)
