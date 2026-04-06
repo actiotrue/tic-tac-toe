@@ -2,7 +2,7 @@ import axios from "axios";
 
 import type { AuthResponse } from "@/types/api";
 
-export const API_URL = `http://${import.meta.env.VITE_API_URL}/api/v1`;
+export const API_URL = import.meta.env.VITE_API_URL;
 
 const api = axios.create({
   baseURL: API_URL,

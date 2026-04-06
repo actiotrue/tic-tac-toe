@@ -79,7 +79,7 @@ export function useMatchmaking() {
   const hasActiveGame = ref(false);
 
   const token = localStorage.getItem("accessToken");
-  const ws = useWebSocket<WebsocketMessage>(`ws://${import.meta.env.VITE_API_URL}/api/v1/ws/game?token=${token}`);
+  const ws = useWebSocket<WebsocketMessage>(`${import.meta.env.VITE_WS_URL}/game?token=${token}`);
 
   const searchGame = () => {
     return ws.send({ type: "joinQueue" });
