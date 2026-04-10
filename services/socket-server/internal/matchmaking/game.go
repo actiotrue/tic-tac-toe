@@ -1,9 +1,6 @@
 package matchmaking
 
 import (
-	"encoding/json"
-	"log"
-	"slices"
 	"time"
 
 	"github.com/Jud1k/tic-tac-toe/internal/client"
@@ -22,115 +19,170 @@ var lines = [][]int{
 	{2, 4, 6},
 }
 
-type Game struct {
-	Id              string                    `json:"gameId"`
-	PlayerIds       []string                  `json:"playerIds"`
-	SideByUserId    map[string]string         `json:"playerSide"`
-	ClientsByUserId map[string]*client.Client `json:"-"`
-	Board           [9]string
-	Turn            string
-	Status          string
-	Winner          string
-	StartTime       time.Time
-	TurnEndTime     time.Time `json:"turnEndTime"`
+type PlayerMatchData struct {
+	Client *client.Client
+	Info   *dto.PlayerInfo
 }
 
-func NewGame(player1, player2 *client.Client) *Game {
-	p1 := player1.UserId
-	p2 := player2.UserId
+type Player struct {
+	Id       string
+	Side     string // "X" или "O"
+	Client   *client.Client
+	Username string
+	ImageUrl string
+}
+
+type Game struct {
+	Id            string
+	Players       [2]*Player
+	Board         [9]string
+	Turn          string
+	Status        string
+	Winner        string
+	StartGameTime time.Time
+	EndGameTime   time.Time
+	TurnEndTime   time.Time
+	RematchState  map[string]bool
+}
+
+func NewGame(players []PlayerMatchData) *Game {
+	player1, player2 := players[0], players[1]
+	rematchState := make(map[string]bool)
+	for _, player := range players {
+		rematchState[player.Client.UserId] = false
+	}
 	return &Game{
-		Id:        uuid.New().String(),
-		PlayerIds: []string{p1, p2},
-		SideByUserId: map[string]string{
-			p1: "X",
-			p2: "O",
+		Id: uuid.New().String(),
+		Players: [2]*Player{
+			{
+				Id:       player1.Client.UserId,
+				Side:     "X",
+				Client:   player1.Client,
+				Username: player1.Info.Username,
+				ImageUrl: player1.Info.ImageUrl,
+			},
+			{
+				Id:       player2.Client.UserId,
+				Side:     "O",
+				Client:   player2.Client,
+				Username: player2.Info.Username,
+				ImageUrl: player2.Info.ImageUrl,
+			},
 		},
-		ClientsByUserId: map[string]*client.Client{
-			p1: player1,
-			p2: player2,
-		},
-		Board:       [9]string{"", "", "", "", "", "", "", "", ""},
-		Status:      "playing",
-		Turn:        "X",
-		StartTime:   time.Now(),
-		TurnEndTime: time.Now().Add(10 * time.Second),
+		Board:         [9]string{"", "", "", "", "", "", "", "", ""},
+		Status:        "playing",
+		Turn:          "X",
+		StartGameTime: time.Now(),
+		TurnEndTime:   time.Now().Add(30 * time.Second),
+		RematchState:  rematchState,
 	}
 }
 
 func (g *Game) ToDAO() dto.GameDAO {
-	return dto.GameDAO{
-		Id:         g.Id,
-		PlayerIds:  append([]string(nil), g.PlayerIds...),
-		PlayerSide: g.SideByUserId,
-		Board:      g.Board,
-		Turn:       g.Turn,
-		Status:     g.Status,
-		Winner:     g.Winner,
-		StartTime:  g.StartTime,
+	players := make([]dto.GameDaoPlayer, 0)
+	for _, p := range g.Players {
+		players = append(players, dto.GameDaoPlayer{
+			Id:       p.Id,
+			Side:     p.Side,
+			Username: p.Username,
+			ImageUrl: p.ImageUrl,
+		})
 	}
+	return dto.GameDAO{
+		Id:          g.Id,
+		Players:     players,
+		Board:       g.Board,
+		Turn:        g.Turn,
+		Status:      g.Status,
+		Winner:      g.Winner,
+		StartTime:   g.StartGameTime,
+		TurnEndTime: g.TurnEndTime,
+	}
+}
+
+func (g *Game) GetPlayerByUserID(userID string) *Player {
+	for _, p := range g.Players {
+		if p.Id == userID {
+			return p
+		}
+	}
+	return nil
+}
+
+func (g *Game) GetPlayerBySide(side string) *Player {
+	for _, p := range g.Players {
+		if p.Side == side {
+			return p
+		}
+	}
+	return nil
+}
+
+func (g *Game) getSideByUserId(userId string) string {
+	for _, player := range g.Players {
+		if player.Id == userId {
+			return player.Side
+		}
+	}
+	return ""
 }
 
 func (g *Game) updateTurnTimer() {
-	g.TurnEndTime = time.Now().Add(10 * time.Second)
-}
-
-func (g *Game) send(client *client.Client, data interface{}) {
-	if client == nil {
-		return
-	}
-	bytes, err := json.Marshal(data)
-	if err != nil {
-		log.Println(err)
-		return
-	}
-	defer func() {
-		if r := recover(); r != nil {
-			log.Printf("Recovered from panic while sending to client %s: %v", client.UserId, r)
-		}
-	}()
-	client.Send <- bytes
+	g.TurnEndTime = time.Now().Add(30 * time.Second)
 }
 
 func (g *Game) attachClient(c *client.Client) {
 	if c == nil {
 		return
 	}
-	if !slices.Contains(g.PlayerIds, c.UserId) {
-		return
+	for _, player := range g.Players {
+		if player.Id == c.UserId {
+			player.Client = c
+		}
 	}
-	if g.ClientsByUserId == nil {
-		g.ClientsByUserId = make(map[string]*client.Client)
-	}
-	g.ClientsByUserId[c.UserId] = c
 }
 
 func (g *Game) detachUser(userId string) {
-	if g.ClientsByUserId == nil {
-		return
+	for _, player := range g.Players {
+		if player.Id == userId {
+			player.Client = nil
+		}
 	}
-	g.ClientsByUserId[userId] = nil
 }
 
 func (g *Game) Detach(userId string) {
 	g.detachUser(userId)
 }
 
-func (g *Game) BroadcastState() {
-	for _, userId := range g.PlayerIds {
-		player := g.ClientsByUserId[userId]
-		if player == nil {
-			continue
+func (g *Game) GetPlayersInfo() []dto.PlayerInfo {
+	players := make([]dto.PlayerInfo, len(g.Players))
+	for i, p := range g.Players {
+		players[i] = dto.PlayerInfo{
+			UserId:   p.Id,
+			Username: p.Username,
+			Side:     p.Side,
+			ImageUrl: p.ImageUrl,
 		}
+	}
+	return players
+}
+
+func (g *Game) BroadcastState() {
+	players := g.GetPlayersInfo()
+	for _, player := range g.Players {
+		secondsLeft := max(int(time.Until(g.TurnEndTime).Seconds()), 0)
+		side := g.getSideByUserId(player.Id)
 		msg := dto.GameState{
 			Type: "gameState",
 			Payload: dto.GameStatePayload{
 				Board:       g.Board[:],
 				Turn:        g.Turn,
-				YourSide:    g.SideByUserId[userId],
-				SecondsLeft: int(time.Until(g.TurnEndTime).Seconds()),
+				YourSide:    side,
+				SecondsLeft: secondsLeft,
+				Players:     players,
 			},
 		}
-		g.send(player, msg)
+		player.Client.SendJSON(msg)
 	}
 }
 
@@ -142,63 +194,9 @@ func (g *Game) BroadcastGameOver(winner string, winningLine []int) {
 			WinningLine: winningLine,
 		},
 	}
-	for _, userId := range g.PlayerIds {
-		g.send(g.ClientsByUserId[userId], msg)
+	for _, player := range g.Players {
+		player.Client.SendJSON(msg)
 	}
-}
-
-func (g *Game) Start() {
-	playerX := g.ClientsByUserId[g.PlayerIds[0]]
-	playerY := g.ClientsByUserId[g.PlayerIds[1]]
-
-	msgX := dto.GameStarted{
-		Type: "gameStarted",
-		Payload: dto.GameStartedPayload{
-			GameID:     g.Id,
-			YourSide:   "X",
-			OpponentId: g.PlayerIds[1],
-			Turn:       g.Turn,
-		},
-	}
-
-	msgO := dto.GameStarted{
-		Type: "gameStarted",
-		Payload: dto.GameStartedPayload{
-			GameID:     g.Id,
-			YourSide:   "O",
-			OpponentId: g.PlayerIds[0],
-			Turn:       g.Turn,
-		},
-	}
-
-	g.send(playerX, msgX)
-	g.send(playerY, msgO)
-}
-
-func (g *Game) SendStartInfo(to *client.Client) {
-	if to == nil {
-		return
-	}
-	if !slices.Contains(g.PlayerIds, to.UserId) {
-		return
-	}
-	opponentId := ""
-	for _, id := range g.PlayerIds {
-		if id != to.UserId {
-			opponentId = id
-			break
-		}
-	}
-	msg := dto.GameStarted{
-		Type: "gameStarted",
-		Payload: dto.GameStartedPayload{
-			GameID:     g.Id,
-			YourSide:   g.SideByUserId[to.UserId],
-			OpponentId: opponentId,
-			Turn:       g.Turn,
-		},
-	}
-	g.send(to, msg)
 }
 
 func (g *Game) HandleMove(userId string, index int) {
@@ -206,7 +204,7 @@ func (g *Game) HandleMove(userId string, index int) {
 		return
 	}
 
-	symbol := g.SideByUserId[userId]
+	symbol := g.getSideByUserId(userId)
 	if g.Turn != symbol {
 		return
 	}
@@ -214,10 +212,8 @@ func (g *Game) HandleMove(userId string, index int) {
 	g.Board[index] = symbol
 	isWin, winner, winningLine := g.checkWinner()
 	if isWin {
-		g.Status = "finished"
-		g.Winner = winner
-		g.BroadcastState()
-		g.BroadcastGameOver(winner, winningLine)
+		g.EndGameTime = time.Now()
+		g.ApplyFinish(winner, winningLine)
 		return
 	}
 
@@ -229,20 +225,20 @@ func (g *Game) HandleMove(userId string, index int) {
 		}
 	}
 	if isDraw {
-		g.Status = "finished"
-		g.Winner = winner
-		g.BroadcastState()
-		g.BroadcastGameOver("draw", nil)
+		g.EndGameTime = time.Now()
+		g.ApplyFinish("draw", nil)
 		return
 	}
+	g.Turn = g.OpponentOf(g.Turn)
 
-	if g.Turn == "X" {
-		g.Turn = "O"
-	} else {
-		g.Turn = "X"
-	}
 	g.updateTurnTimer()
+}
+
+func (g *Game) ApplyFinish(winner string, line []int) {
+	g.Status = "finished"
+	g.Winner = winner
 	g.BroadcastState()
+	g.BroadcastGameOver(winner, line)
 }
 
 func (g *Game) OpponentOf(symbol string) string {
@@ -268,4 +264,51 @@ func (g *Game) checkWinner() (bool, string, []int) {
 
 func (g *Game) UpdatePlayerClient(newClient *client.Client) {
 	g.attachClient(newClient)
+}
+
+func (g *Game) CheckReadyRematch() bool {
+	allTrue := true
+	for _, v := range g.RematchState {
+		if !v {
+			allTrue = false
+			break
+		}
+	}
+	return allTrue
+}
+
+func (g *Game) BroadcastRematchState() {
+	msg := dto.GameRematchState{
+		Type: "rematchState",
+		Payload: dto.GameRematchStatePayload{
+			Ready: g.RematchState,
+		},
+	}
+
+	for _, player := range g.Players {
+		player.Client.SendJSON(msg)
+	}
+}
+
+func (g *Game) getOpponentByUserId(userId string) *Player {
+	for _, player := range g.Players {
+		if player.Id != userId {
+			return player
+		}
+	}
+	return nil
+}
+
+func (g *Game) BroadcastGameClosed(reason string, userId string) {
+	msg := dto.GameClosed{
+		Type: "gameClosed",
+		Payload: dto.GameClosedPayload{
+			Reason: reason,
+		},
+	}
+
+	to := g.getOpponentByUserId(userId)
+	if to != nil {
+		to.Client.SendJSON(msg)
+	}
 }

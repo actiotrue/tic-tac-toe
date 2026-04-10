@@ -20,7 +20,6 @@ func main() {
 	if err := env.Parse(&config); err != nil {
 		log.Fatal("Parsing error: ", err)
 	}
-
 	gameStoreClient := integration.NewGameStoreClient(config.FastApiUrl, config.InternalServiceKey)
 
 	rdb := redis.NewClient(&redis.Options{
@@ -38,7 +37,7 @@ func main() {
 	hub := hub.NewHub(gameStoreClient, rdb)
 	go hub.Run()
 
-	server := ws.Server{Config: config, Hub: hub}
+	server := ws.NewServer(config, hub)
 	http.HandleFunc("/api/v1/ws/game", server.HandleWs)
 	fmt.Println("Listening on port 8080")
 
