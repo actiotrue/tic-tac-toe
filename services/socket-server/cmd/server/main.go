@@ -7,7 +7,6 @@ import (
 	"net/http"
 
 	"github.com/caarlos0/env/v11"
-	//"github.com/joho/godotenv"
 	"github.com/redis/go-redis/v9"
 
 	"github.com/Jud1k/tic-tac-toe/internal/config"
@@ -17,15 +16,10 @@ import (
 )
 
 func main() {
-     //	if err := godotenv.Load(); err != nil {
-     //		log.Fatal("Error loading .env file")
-     //	}
-
 	var config config.Config
 	if err := env.Parse(&config); err != nil {
 		log.Fatal("Parsing error: ", err)
 	}
-
 	gameStoreClient := integration.NewGameStoreClient(config.FastApiUrl, config.InternalServiceKey)
 
 	rdb := redis.NewClient(&redis.Options{
@@ -43,7 +37,7 @@ func main() {
 	hub := hub.NewHub(gameStoreClient, rdb)
 	go hub.Run()
 
-	server := ws.Server{Config: config, Hub: hub}
+	server := ws.NewServer(config, hub)
 	http.HandleFunc("/api/v1/ws/game", server.HandleWs)
 	fmt.Println("Listening on port 8080")
 

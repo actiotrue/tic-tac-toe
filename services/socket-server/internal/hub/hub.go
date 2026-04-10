@@ -23,8 +23,9 @@ type Hub struct {
 	GameByUserId    map[string]*matchmaking.Game
 	GamesById       map[string]*matchmaking.Game
 
-	gameStoreClient *integration.GameStoreClient
-	gameRepository  *storage.GameRepository
+	TicketRepository *storage.TicketRepository
+	gameStoreClient  *integration.GameStoreClient
+	gameRepository   *storage.GameRepository
 }
 
 func NewHub(gameStoreClient *integration.GameStoreClient, redisClient *redis.Client) *Hub {
@@ -37,22 +38,34 @@ func NewHub(gameStoreClient *integration.GameStoreClient, redisClient *redis.Cli
 		GameByUserId:    make(map[string]*matchmaking.Game),
 		GamesById:       make(map[string]*matchmaking.Game),
 
-		gameStoreClient: gameStoreClient,
-		gameRepository:  storage.NewGameRepository(redisClient),
+		gameStoreClient:  gameStoreClient,
+		gameRepository:   storage.NewGameRepository(redisClient),
+		TicketRepository: storage.NewTicketRepository(redisClient),
 	}
 }
 
 func (h *Hub) FromDAO(dao dto.GameDAO) *matchmaking.Game {
+	var players [2]*matchmaking.Player
+
+	for i := 0; i < len(dao.Players) && i < 2; i++ {
+		p := dao.Players[i]
+		players[i] = &matchmaking.Player{
+			Id:       p.Id,
+			Side:     p.Side,
+			Username: p.Username,
+			ImageUrl: p.ImageUrl,
+			Client:   h.ClientsByUserId[p.Id],
+		}
+	}
 	game := &matchmaking.Game{
-		Id:              dao.Id,
-		PlayerIds:       append([]string(nil), dao.PlayerIds...),
-		SideByUserId:    dao.PlayerSide,
-		ClientsByUserId: make(map[string]*client.Client),
-		Board:           dao.Board,
-		Turn:            dao.Turn,
-		Status:          dao.Status,
-		Winner:          dao.Winner,
-		StartTime:       dao.StartTime,
+		Id:            dao.Id,
+		Players:       players,
+		Board:         dao.Board,
+		Turn:          dao.Turn,
+		Status:        dao.Status,
+		Winner:        dao.Winner,
+		StartGameTime: dao.StartTime,
+		TurnEndTime:   dao.TurnEndTime,
 	}
 	return game
 }
@@ -68,12 +81,8 @@ func (h *Hub) checkGameTimeouts() {
 }
 
 func (h *Hub) handleTimeout(game *matchmaking.Game) {
-	game.Status = "finished"
 	winner := game.OpponentOf(game.Turn)
-	game.Winner = winner
-	game.BroadcastState()
-	game.BroadcastGameOver(winner, nil)
-	h.finishGame(game)
+	game.ApplyFinish(winner, nil)
 }
 
 func (h *Hub) handleMessage(message client.Message) {
@@ -90,11 +99,14 @@ func (h *Hub) handleMessage(message client.Message) {
 		uid := message.Client.UserId
 		if game := h.GameByUserId[uid]; game != nil {
 			game.UpdatePlayerClient(message.Client)
-			game.SendStartInfo(message.Client)
 			game.BroadcastState()
 			return
 		}
-		h.addToWaitingQueue(message.Client)
+		err := h.tryRestore(message.Client)
+		if err != nil {
+			h.addToWaitingQueue(message.Client)
+			return
+		}
 	case "makeMove":
 		uid := message.Client.UserId
 		game := h.GameByUserId[uid]
@@ -109,69 +121,109 @@ func (h *Hub) handleMessage(message client.Message) {
 			return
 		}
 		game.HandleMove(uid, request.Payload.Index)
+		gameDao := game.ToDAO()
 
+		//TODO: Need to save game state in background, but without races when last turn
 		ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
-		if err := h.gameRepository.SaveGameState(ctx, game.ToDAO()); err != nil {
+		defer cancel()
+		if err := h.gameRepository.SaveGameState(ctx, gameDao); err != nil {
 			log.Println("Error saving game state: ", err)
 		}
-		cancel()
-
-		if game.Status == "finished" {
-			h.finishGame(game)
-		}
+		log.Println("Game status:", game.Status)
+		game.BroadcastState()
 	case "leaveQueue":
 		h.removeFromWaitingQueue(message.Client)
 		log.Printf("User %s left from waiting queue", message.Client.UserId)
+	case "rematchRequest":
+		game := h.GameByUserId[message.Client.UserId]
+		if game == nil {
+			log.Println("No game found for client")
+			return
+		}
+		h.handleRematchRequest(game, message.Client)
+	case "newGame":
+		game := h.GameByUserId[message.Client.UserId]
+		if game != nil {
+			h.finishGame(game)
+		}
+		h.addToWaitingQueue(message.Client)
 	default:
 		log.Println("Unknown message type: ", base.Type)
 	}
+}
 
+func (h *Hub) handleRematchRequest(game *matchmaking.Game, client *client.Client) {
+	if game.Status != "finished" || game.RematchState[client.UserId] {
+		return
+	}
+	game.RematchState[client.UserId] = true
+	game.BroadcastRematchState()
+
+	ready := game.CheckReadyRematch()
+	if ready {
+		h.finishGame(game)
+		client1 := game.Players[0].Client
+		client2 := game.Players[1].Client
+		h.startNewGame(client1, client2)
+	}
 }
 
 func (h *Hub) finishGame(game *matchmaking.Game) {
 	log.Println("Game finished: ", game.Id)
+
+	copyGame := *game
+
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
+	defer cancel()
+
+	gameDao := copyGame.ToDAO()
+	log.Printf("Deleting game %s from Redis", game.Id)
+	if err := h.gameRepository.DeleteGame(ctx, gameDao); err != nil {
+		log.Printf("Error deleting game from Redis: %v", err)
+	}
+
 	go func() {
-		err := h.gameStoreClient.SaveGame(*game)
+		err := h.gameStoreClient.SaveGame(copyGame)
 		if err != nil {
 			log.Println("Error saving game state: ", err)
 		}
 	}()
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
-	h.gameRepository.DeleteGame(ctx, &dto.GameDAO{Id: game.Id, PlayerIds: game.PlayerIds})
-	cancel()
+	h.deleteGameFromHub(game)
+}
 
-	for _, pid := range game.PlayerIds {
-		delete(h.GameByUserId, pid)
+func (h *Hub) deleteGameFromHub(game *matchmaking.Game) {
+	for _, player := range game.Players {
+		delete(h.GameByUserId, player.Id)
 	}
 	delete(h.GamesById, game.Id)
 }
 
-func (h *Hub) tryRestore(client *client.Client) {
+func (h *Hub) tryRestore(client *client.Client) error {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*2)
 	gameId, err := h.gameRepository.GetGameByUserId(ctx, client.UserId)
 	cancel()
 	if err != nil || gameId == "" {
-		return
+		return err
 	}
 
 	game := h.GamesById[gameId]
 	if game == nil {
 		ctx, cancel := context.WithTimeout(context.Background(), time.Second*2)
+		defer cancel()
 		gameDao, err := h.gameRepository.GetGameById(ctx, gameId)
-		cancel()
 		if err != nil {
-			return
+			return err
 		}
 		game = h.FromDAO(*gameDao)
 		h.GamesById[gameId] = game
-		for _, pid := range game.PlayerIds {
-			h.GameByUserId[pid] = game
+		for _, player := range game.Players {
+			h.GameByUserId[player.Id] = game
 		}
 	}
 
 	game.UpdatePlayerClient(client)
-	game.SendStartInfo(client)
 	game.BroadcastState()
+	return nil
 }
 
 func (h *Hub) Run() {
@@ -183,20 +235,27 @@ func (h *Hub) Run() {
 		case <-ticker.C:
 			h.checkGameTimeouts()
 		case client := <-h.Register:
-			// Replace any previous client for same userId.
 			if old := h.ClientsByUserId[client.UserId]; old != nil && old != client {
-				// Best-effort: close old connection; its pumps will exit.
-				_ = old.Conn.Close()
-				// Don't close old.Send here (could race with sender); it will be GC'd when pumps exit.
+				if old.Conn != client.Conn {
+					log.Printf("Replacing existing connection for user %s", client.UserId)
+					h.removeFromWaitingQueue(old)
+					if game := h.GameByUserId[old.UserId]; game != nil {
+						game.Detach(old.UserId)
+					}
+					old.Conn.Close()
+				}
 			}
 			h.ClientsByUserId[client.UserId] = client
-			h.tryRestore(client)
 		case client := <-h.Unregister:
-			// Only unregister if this exact client is the active one for that userId.
-			if h.ClientsByUserId[client.UserId] == client {
+			if current, ok := h.ClientsByUserId[client.UserId]; ok && current == client {
 				delete(h.ClientsByUserId, client.UserId)
 			}
 			h.removeFromWaitingQueue(client)
+			if game := h.GameByUserId[client.UserId]; game != nil && game.Status == "finished" {
+				game.RematchState[client.UserId] = false
+				game.BroadcastGameClosed("playerLeft", client.UserId)
+				h.finishGame(game)
+			}
 			if game := h.GameByUserId[client.UserId]; game != nil {
 				game.Detach(client.UserId)
 			}
@@ -208,7 +267,43 @@ func (h *Hub) Run() {
 	}
 }
 
+func (h *Hub) prepareMatchData(clients ...*client.Client) []matchmaking.PlayerMatchData {
+	ids := make([]string, len(clients))
+	for i, c := range clients {
+		ids[i] = c.UserId
+	}
+	playersInfo, err := h.gameStoreClient.GetPlayers(ids)
+	if err != nil {
+		log.Printf("Error fetching player info: %v", err)
+		return nil
+	}
+
+	infoMap := make(map[string]*dto.PlayerInfo)
+	for _, info := range playersInfo {
+		infoMap[info.UserId] = info
+	}
+
+	data := make([]matchmaking.PlayerMatchData, len(clients))
+	for i, c := range clients {
+		data[i] = matchmaking.PlayerMatchData{
+			Client: c,
+			Info:   infoMap[c.UserId],
+		}
+	}
+	return data
+}
+
+func (h *Hub) startSearchingOpponent(client *client.Client) {
+	msg := dto.SearchingOpponent{
+		Type: "searchingOpponent",
+	}
+	client.SendJSON(msg)
+}
+
 func (h *Hub) addToWaitingQueue(client *client.Client) {
+	if client.Conn == nil {
+		return
+	}
 	if h.GameByUserId[client.UserId] != nil {
 		return
 	}
@@ -218,41 +313,40 @@ func (h *Hub) addToWaitingQueue(client *client.Client) {
 		}
 	}
 	h.WaitingQueue = append(h.WaitingQueue, client)
-
-	msg := dto.SearchingOpponent{
-		Type: "searchingOpponent",
-	}
-	bytes, err := json.Marshal(msg)
-	if err != nil {
-		log.Println("Error marshalling message: ", err)
-		return
-	}
-	client.Send <- bytes
 	log.Println(len(h.WaitingQueue))
+
+	h.startSearchingOpponent(client)
+
 	if len(h.WaitingQueue) >= 2 {
-		player1, player2 := h.WaitingQueue[0], h.WaitingQueue[1]
-		if player1.UserId == player2.UserId {
+		client1, client2 := h.WaitingQueue[0], h.WaitingQueue[1]
+		if client1.UserId == client2.UserId {
 			h.WaitingQueue = h.WaitingQueue[1:]
 			return
 		}
 		h.WaitingQueue = h.WaitingQueue[2:]
+		h.startNewGame(client1, client2)
+	}
+}
 
-		game := matchmaking.NewGame(player1, player2)
-		log.Println("Game created: ", game.Id)
-		h.GamesById[game.Id] = game
-		for _, pid := range game.PlayerIds {
-			h.GameByUserId[pid] = game
-		}
+func (h *Hub) startNewGame(client1, client2 *client.Client) {
+	players := h.prepareMatchData(client1, client2)
+	game := matchmaking.NewGame(players)
+	log.Println("Game created: ", game.Id)
 
+	h.GamesById[game.Id] = game
+	for _, player := range game.Players {
+		h.GameByUserId[player.Id] = game
+	}
+
+	go func() {
 		ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
+		defer cancel()
 		if err := h.gameRepository.SaveGameState(ctx, game.ToDAO()); err != nil {
 			log.Println("Error saving initial game state: ", err)
 		}
-		cancel()
+	}()
 
-		game.Start()
-		game.BroadcastState()
-	}
+	game.BroadcastState()
 }
 
 func (h *Hub) removeFromWaitingQueue(client *client.Client) {

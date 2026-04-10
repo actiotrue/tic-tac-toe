@@ -27,7 +27,7 @@ func NewGameStoreClient(baseUrl string, apiKey string) *GameStoreClient {
 }
 
 func (c *GameStoreClient) SaveGame(game matchmaking.Game) error {
-	if len(game.PlayerIds) < 2 {
+	if len(game.Players) < 2 {
 		return fmt.Errorf("not enough players to save game")
 	}
 
@@ -46,18 +46,18 @@ func (c *GameStoreClient) SaveGame(game matchmaking.Game) error {
 	finishedGame := dto.GameResultRequest{
 		Id:       game.Id,
 		Result:   gameResult,
-		Duration: int(time.Since(game.StartTime).Seconds()),
+		Duration: int(game.EndGameTime.Sub(game.StartGameTime).Seconds()),
 		Players: []dto.Player{
 			{
 				GameId:   game.Id,
-				PlayerId: game.PlayerIds[0],
-				Side:     game.SideByUserId[game.PlayerIds[0]],
+				PlayerId: game.Players[0].Id,
+				Side:     game.Players[0].Side,
 				Type:     "human",
 			},
 			{
 				GameId:   game.Id,
-				PlayerId: game.PlayerIds[1],
-				Side:     game.SideByUserId[game.PlayerIds[1]],
+				PlayerId: game.Players[1].Id,
+				Side:     game.Players[1].Side,
 				Type:     "human",
 			},
 		},
@@ -87,4 +87,35 @@ func (c *GameStoreClient) SaveGame(game matchmaking.Game) error {
 		return fmt.Errorf("error saving game: %s", resp.Status)
 	}
 	return nil
+}
+
+func (c *GameStoreClient) GetPlayers(userIds []string) ([]*dto.PlayerInfo, error) {
+	body, err := json.Marshal(userIds)
+	if err != nil {
+		return nil, fmt.Errorf("marshal ids: %w", err)
+	}
+
+	req, err := http.NewRequest("POST", c.BaseUrl+"/api/v1/players/batch/service", bytes.NewBuffer(body))
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("X-Internal-Service-Key", c.ApiKey)
+	resp, err := c.HttpClient.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != 200 {
+		return nil, fmt.Errorf("error getting player: %s", resp.Status)
+	}
+
+	var player []*dto.PlayerInfo
+	err = json.NewDecoder(resp.Body).Decode(&player)
+	if err != nil {
+		return nil, err
+	}
+	return player, nil
 }

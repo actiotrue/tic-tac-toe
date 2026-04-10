@@ -35,7 +35,7 @@ function startGame(mode: "pvp" | "pve") {
             Tic Tac Toe
           </h1>
           <p class="text-lg text-gray-400">
-            Just tic tac toe. If you don`t interesting go away.
+            Just tic tac toe. If you don't interesting go away.
           </p>
         </div>
 

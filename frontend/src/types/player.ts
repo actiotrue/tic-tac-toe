@@ -1,3 +1,5 @@
+import type { PlayerSymbol } from "./game";
+
 export type Player = {
   userId: string;
   username: string;
@@ -9,6 +11,13 @@ export type Player = {
   rank: number;
   createdAt: string;
   updatedAt: string;
+};
+
+export type PlayerInfo = {
+  userId: string;
+  side: PlayerSymbol;
+  username: string;
+  imageUrl: string;
 };
 
 export type RankedPlayer = Player & {

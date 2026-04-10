@@ -30,9 +30,9 @@ function onUpdate(event: Event) {
     <input ref="fileInput" type="file" class="hidden" accept="image/*" @change="onUpdate">
     <AvatarImage
       :image-url="currentImageUrl"
-      :width="200"
-      :height="200"
-      class="w-32 h-32 rounded-full border-4 border-gray-600"
+      :width="130"
+      :height="130"
+      class="rounded-full border-4 border-gray-600"
     />
     <button
       class="absolute cursor-pointer bottom-2 right-2 bg-purple-600 rounded-full p-2 hover:bg-purple-400"

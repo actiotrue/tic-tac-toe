@@ -17,6 +17,8 @@ class PlayerDao(SqlDaoBase):
         row = await self.db.fetchrow(
             query, player_in.user_id, player_in.username, player_in.image_url
         )
+        if not row:
+            raise EntityNotFound("Player", player_in.user_id)
         player = Player.from_row(row)
         logger.info(f"Created player ID: {player.user_id} Username: {player.username}")
         return player
@@ -31,6 +33,13 @@ class PlayerDao(SqlDaoBase):
         return player
 
     async def get_by_ids(self, player_ids: list[uuid.UUID]) -> list[Player]:
+        query = """SELECT * FROM players WHERE user_id = ANY($1::uuid[])"""
+        rows = await self.db.fetch(query, player_ids)
+        players = Player.from_rows(rows)
+        logger.info(f"Found {len(players)} players")
+        return players
+
+    async def get_by_ids_ordered(self, player_ids: list[uuid.UUID]) -> list[Player]:
         query = """SELECT p.*
         FROM unnest($1::uuid[]) WITH ORDINALITY AS ord(id, pos)
         JOIN players p ON p.user_id = ord.id

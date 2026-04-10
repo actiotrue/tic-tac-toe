@@ -4,7 +4,7 @@ import { CardContainer, CardContent, CardFooter, CardHeader, CardTitle } from "@
 
 const props = defineProps<{
   board: GameBoard;
-  currentPlayer: PlayerSymbol;
+  currentPlayer: PlayerSymbol | null;
   winner: Winner | null;
   winningLine?: number[];
   disabled?: boolean;

@@ -17,28 +17,17 @@ type SearchingOpponent struct {
 	Type string `json:"type"`
 }
 
-type GameStarted struct {
-	Type    string             `json:"type"`
-	Payload GameStartedPayload `json:"payload"`
-}
-
-type GameStartedPayload struct {
-	GameID     string `json:"gameId"`
-	YourSide   string `json:"yourSide"`
-	OpponentId string `json:"opponentId"`
-	Turn       string `json:"turn"`
-}
-
 type GameState struct {
 	Type    string           `json:"type"`
 	Payload GameStatePayload `json:"payload"`
 }
 
 type GameStatePayload struct {
-	Turn        string   `json:"turn"`
-	Board       []string `json:"board"`
-	YourSide    string   `json:"yourSide"`
-	SecondsLeft int      `json:"secondsLeft"`
+	Turn        string       `json:"turn"`
+	Board       []string     `json:"board"`
+	YourSide    string       `json:"yourSide"`
+	SecondsLeft int          `json:"secondsLeft"`
+	Players     []PlayerInfo `json:"players"`
 }
 
 type GameOver struct {
@@ -66,6 +55,13 @@ type Player struct {
 	Type     string `json:"type"`
 }
 
+type PlayerInfo struct {
+	UserId   string `json:"userId"`
+	Username string `json:"username"`
+	Side     string `json:"side"`
+	ImageUrl string `json:"imageUrl"`
+}
+
 type GameResultRequest struct {
 	Id       string     `json:"id"`
 	Result   GameResult `json:"result"`
@@ -73,13 +69,42 @@ type GameResultRequest struct {
 	Players  []Player   `json:"players"`
 }
 
+type GameRematchRequest struct {
+	Type string `json:"type"`
+}
+
+type GameRematchState struct {
+	Type    string                  `json:"type"`
+	Payload GameRematchStatePayload `json:"payload"`
+}
+
+type GameRematchStatePayload struct {
+	Ready map[string]bool `json:"ready"`
+}
+
+type GameClosed struct {
+	Type    string            `json:"type"`
+	Payload GameClosedPayload `json:"payload"`
+}
+
+type GameClosedPayload struct {
+	Reason string `json:"reason"`
+}
+
+type GameDaoPlayer struct {
+	Id       string `json:"userId"`
+	Side     string `json:"side"`
+	Username string `json:"username"`
+	ImageUrl string `json:"imageUrl"`
+}
+
 type GameDAO struct {
-	Id         string            `json:"gameId"`
-	PlayerIds  []string          `json:"playerIds"`
-	PlayerSide map[string]string `json:"playerSide"`
-	Board      [9]string         `json:"board"`
-	Turn       string            `json:"turn"`
-	Status     string            `json:"status"`
-	Winner     string            `json:"winner"`
-	StartTime  time.Time         `json:"startTime"`
+	Id          string          `json:"gameId"`
+	Players     []GameDaoPlayer `json:"players"`
+	Board       [9]string       `json:"board"`
+	Turn        string          `json:"turn"`
+	Status      string          `json:"status"`
+	Winner      string          `json:"winner"`
+	StartTime   time.Time       `json:"startTime"`
+	TurnEndTime time.Time       `json:"turnEndTime"`
 }

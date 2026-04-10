@@ -12,6 +12,7 @@ from app.core.database import database
 from app.api.router import api_router
 from app.exceptions import EntityNotFound
 from app.core.redis import redis_client
+from app.core.settings import settings
 
 
 @asynccontextmanager
@@ -25,23 +26,18 @@ async def lifespan(_: FastAPI):
 
 app = FastAPI(lifespan=lifespan)
 
+
 app.include_router(prefix="/api/v1", router=api_router)
 
-origins = [
-    "http://localhost:5173",
-   "http://146.0.72.85",
-  "https://146.0.72.85",
- "http://localhost",
-    "https://localhost"
-]
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+if settings.all_cors_origins:
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=settings.all_cors_origins,
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
 
 
 @app.middleware("http")

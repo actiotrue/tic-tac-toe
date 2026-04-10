@@ -32,7 +32,7 @@ class GameService:
             ]
             if len(player_ids) < 1:
                 raise InvalidGamePlayersError
-            players = await uow.players.get_by_ids(player_ids)
+            players = await uow.players.get_by_ids_ordered(player_ids)
 
             side_map = {
                 p.player_id: p.side for p in game_in.players if p.player_id is not None
@@ -44,7 +44,7 @@ class GameService:
                     current_rating=player.rating, result=game_in.result, side=side
                 )
                 await uow.players.update_stats(
-                    player.user_id, new_rating, game_in.result, side
+                    player.user_id, game_in.result, new_rating, side
                 )
         for player in players:
             side = side_map[player.user_id]

@@ -123,7 +123,7 @@ const casesCalculateWinner: TestCaseCalculateWinner[] = [
     board: b(`X O X 
               X O O 
               O X X`),
-    expected: { winner: "Draw" },
+    expected: { winner: "draw" },
   },
   {
     name: "Game in progress returns null",

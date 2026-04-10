@@ -1,9 +1,10 @@
 from typing import Self
 
 from asyncpg import Connection
-from redis import Redis
+from redis.asyncio import Redis
 
 from app.dao.redis.leaderboard import LeaderboardDao
+from app.dao.redis.ticket import TicketDao
 from app.dao.postgres.game import GameDao
 from app.dao.postgres.player import PlayerDao
 from app.dao.postgres.user import UserDao
@@ -18,6 +19,7 @@ class UnitOfWork:
 
         self.redis = redis_client
         self.leaderboard = LeaderboardDao(self.redis)
+        self.ticket = TicketDao(self.redis)
 
     async def __aenter__(self) -> Self:
         self._transaction = self.sql_conn.transaction()

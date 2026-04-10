@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta, timezone
 from typing import Any
+import uuid
 from pwdlib import PasswordHash
 import jwt
 
@@ -34,10 +35,14 @@ def validate_token(token: str, token_type: str) -> dict[str, Any]:
         payload = jwt.decode(
             token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM]
         )
-    except jwt.PyJWTError:
-        raise InvalidTokenException
     except jwt.ExpiredSignatureError:
         raise TokenExpiredException
+    except jwt.PyJWTError:
+        raise InvalidTokenException
     if payload.get("type") != token_type:
         raise InvalidTokenException
     return payload
+
+
+def generate_ws_ticket() -> str:
+    return str(uuid.uuid7())

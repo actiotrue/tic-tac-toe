@@ -10,18 +10,18 @@ import (
 	"github.com/redis/go-redis/v9"
 )
 
-type Keys struct {
+type GameKeys struct {
 	game string
 	user string
 }
 
 type GameRepository struct {
 	redis *redis.Client
-	keys  Keys
+	keys  GameKeys
 }
 
 func NewGameRepository(redisClient *redis.Client) *GameRepository {
-	return &GameRepository{redis: redisClient, keys: Keys{game: "game:%s", user: "user:%s:active_game"}}
+	return &GameRepository{redis: redisClient, keys: GameKeys{game: "game:%s", user: "user:%s:active_game"}}
 }
 
 func (r *GameRepository) SaveGameState(ctx context.Context, game dto.GameDAO) error {
@@ -33,8 +33,8 @@ func (r *GameRepository) SaveGameState(ctx context.Context, game dto.GameDAO) er
 	pipe := r.redis.Pipeline()
 	pipe.Set(ctx, fmt.Sprintf(r.keys.game, game.Id), data, time.Hour)
 
-	for _, playerId := range game.PlayerIds {
-		pipe.Set(ctx, fmt.Sprintf(r.keys.user, playerId), game.Id, time.Hour)
+	for _, player := range game.Players {
+		pipe.Set(ctx, fmt.Sprintf(r.keys.user, player.Id), game.Id, time.Hour)
 	}
 
 	_, err = pipe.Exec(ctx)
@@ -58,11 +58,12 @@ func (r *GameRepository) GetGameById(ctx context.Context, gameId string) (*dto.G
 	return &game, nil
 }
 
-func (r *GameRepository) DeleteGame(ctx context.Context, game *dto.GameDAO) {
+func (r *GameRepository) DeleteGame(ctx context.Context, game dto.GameDAO) error {
 	pipe := r.redis.Pipeline()
 	pipe.Del(ctx, fmt.Sprintf(r.keys.game, game.Id))
-	for _, playerId := range game.PlayerIds {
-		pipe.Del(ctx, fmt.Sprintf(r.keys.user, playerId))
+	for _, player := range game.Players {
+		pipe.Del(ctx, fmt.Sprintf(r.keys.user, player.Id))
 	}
-	pipe.Exec(ctx)
+	_, err := pipe.Exec(ctx)
+	return err
 }

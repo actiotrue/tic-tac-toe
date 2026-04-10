@@ -8,6 +8,22 @@ export const useAuth = defineStore("auth", () => {
   const isLoading = ref<boolean>(false);
   const userId = ref<string | null>(null);
 
+  const getAccessToken = () => {
+    return localStorage.getItem("accessToken");
+  };
+
+  const refreshTokens = async () => {
+    isLoading.value = true;
+    try {
+      const response = await authApi.refresh();
+      isLoggedIn.value = true;
+      userId.value = response.userId;
+    }
+    finally {
+      isLoading.value = false;
+    }
+  };
+
   const signup = async (username: string, password: string) => {
     isLoading.value = true;
     try {
@@ -32,7 +48,7 @@ export const useAuth = defineStore("auth", () => {
   };
 
   const initAuth = async () => {
-    const accessToken = localStorage.getItem("accessToken");
+    const accessToken = getAccessToken;
     if (!accessToken) {
       return;
     }
@@ -64,6 +80,8 @@ export const useAuth = defineStore("auth", () => {
     isLoggedIn,
     isLoading,
     userId,
+    getAccessToken,
+    refreshTokens,
     signup,
     login,
     initAuth,

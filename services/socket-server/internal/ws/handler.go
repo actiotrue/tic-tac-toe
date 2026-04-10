@@ -1,11 +1,11 @@
 package ws
 
 import (
+	"context"
 	"log"
 	"net/http"
-	"strings"
+	"time"
 
-	"github.com/Jud1k/tic-tac-toe/internal/auth"
 	"github.com/Jud1k/tic-tac-toe/internal/client"
 	"github.com/Jud1k/tic-tac-toe/internal/config"
 	"github.com/Jud1k/tic-tac-toe/internal/hub"
@@ -14,39 +14,55 @@ import (
 )
 
 type Server struct {
-	Config config.Config
-	Hub    *hub.Hub
+	Config   config.Config
+	Hub      *hub.Hub
+	upgrader websocket.Upgrader
 }
 
-var upgrader = websocket.Upgrader{
-	ReadBufferSize:  1024,
-	WriteBufferSize: 1024,
-	CheckOrigin: func(r *http.Request) bool {
-		return true
-	},
+func NewServer(config config.Config, hub *hub.Hub) *Server {
+	return &Server{
+		Config: config,
+		Hub:    hub,
+		upgrader: websocket.Upgrader{
+			ReadBufferSize:  1024,
+			WriteBufferSize: 1024,
+			CheckOrigin: func(r *http.Request) bool {
+				origin := r.Header.Get("Origin")
+				if len(config.CorsOrigins) == 0 {
+					return false
+				}
+				for _, allowed := range config.ParseCors() {
+					if allowed == "*" || allowed == origin {
+						return true
+					}
+				}
+				return false
+			},
+		},
+	}
 }
 
 func (s *Server) HandleWs(w http.ResponseWriter, r *http.Request) {
-	token := extractToken(r)
-	if token == "" {
+	ticket := extractTicket(r)
+	if ticket == "" {
 		http.Error(w, "Unauthorized", http.StatusUnauthorized)
 		return
 	}
-	claims, err := auth.ParseToken(token, s.Config.SecretKey)
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
+	defer cancel()
+	userId, err := s.Hub.TicketRepository.GetUserIdByTicket(ctx, ticket)
 	if err != nil {
 		http.Error(w, "Unauthorized", http.StatusUnauthorized)
 		return
 	}
-	log.Println("User connected with id: ", claims.UserId)
-
-	wsConn, err := upgrader.Upgrade(w, r, nil)
+	wsConn, err := s.upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		log.Println("Upgrade error: ", err)
 		return
 	}
 
 	client := &client.Client{
-		UserId:   claims.UserId,
+		UserId:   userId,
 		Conn:     wsConn,
 		Send:     make(chan []byte),
 		Incoming: s.Hub.Incoming,
@@ -58,10 +74,6 @@ func (s *Server) HandleWs(w http.ResponseWriter, r *http.Request) {
 	go client.ReadPump()
 }
 
-func extractToken(r *http.Request) string {
-	authHeader := r.Header.Get("Authorization")
-	if after, ok := strings.CutPrefix(authHeader, "Bearer "); ok {
-		return after
-	}
-	return r.URL.Query().Get("token")
+func extractTicket(r *http.Request) string {
+	return r.URL.Query().Get("ticket")
 }
