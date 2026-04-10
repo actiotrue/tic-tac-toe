@@ -53,9 +53,9 @@ const gamesWithPlayers = computed(() => {
 function getRowClass(game: GameDetails) {
   const userSide = game.players.find(p => p.playerId === userId)?.side;
   if (game.result === "draw") {
-    return "bg-gray-700 border-l-4 border-gray-500";
+    return "bg-yellow-500 border-l-4 border-gray-500";
   }
-  if (userSide === "X" && game.result === "x_won") {
+  if ((userSide === "X" && game.result === "x_won") || (userSide === "O" && game.result === "o_won")) {
     return "bg-green-500 border-l-4 border-green-500";
   }
   return "bg-red-500 border-l-4 border-red-500";
@@ -119,7 +119,7 @@ onUnmounted(() => {
                   <AvatarImage
                     :image-url="game.playerX?.player?.imageUrl"
                     :placeholder="game.playerX?.player?.username?.toUpperCase() || '?'"
-                    class="w-10 h-10 rounded-full overflow-hidden bg-gray-800 border border-gray-700 shrink-0"
+                    class="rounded-full overflow-hidden bg-gray-800 border border-gray-700 shrink-0"
                   />
                   <span class="truncate">{{ game.playerX?.player?.username || '—' }}</span>
                 </div>
@@ -130,6 +130,8 @@ onUnmounted(() => {
                   <AvatarImage
                     :image-url="game.playerO?.player?.imageUrl"
                     :placeholder="game.playerO?.player?.username?.toUpperCase() || '?'"
+                    :width="40"
+                    :height="40"
                     class="w-10 h-10 rounded-full overflow-hidden bg-gray-800 border border-gray-700 shrink-0"
                   />
                   <span class="truncate">{{ game.playerO?.player?.username || '—' }}</span>

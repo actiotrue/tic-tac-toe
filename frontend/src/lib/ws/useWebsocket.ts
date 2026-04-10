@@ -1,6 +1,8 @@
+import type { Ref } from "vue";
+
 import { ref } from "vue";
 
-export function useWebSocket<T = any>(url: string) {
+export function useWebSocket<T = any>(urlRef: Ref<string>) {
   const ws = ref<WebSocket | null>(null);
 
   const connect = (options?: {
@@ -9,7 +11,11 @@ export function useWebSocket<T = any>(url: string) {
     onError?: (err: string) => void;
     onClose?: (reason: string) => void;
   }) => {
-    const socket = new WebSocket(url);
+    if (!urlRef.value) {
+      console.error("WebSocket URL is empty");
+      return;
+    }
+    const socket = new WebSocket(urlRef.value);
 
     if (options?.onOpen)
       socket.onopen = options.onOpen;
@@ -41,5 +47,11 @@ export function useWebSocket<T = any>(url: string) {
     }
   };
 
-  return { connect, send, ws };
+  const close = () => {
+    if (ws.value) {
+      ws.value.close();
+    }
+  };
+
+  return { connect, send, close, ws };
 }

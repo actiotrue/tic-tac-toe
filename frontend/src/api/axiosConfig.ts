@@ -1,6 +1,6 @@
 import axios from "axios";
 
-import type { AuthResponse } from "@/types/api";
+import { refresh } from "./auth";
 
 export const API_URL = import.meta.env.VITE_API_URL;
 
@@ -34,13 +34,9 @@ api.interceptors.response.use(
     if (error.response?.status === 401 && !originalRequest._isRetry) {
       originalRequest._isRetry = true;
       try {
-        const response = await axios.post<AuthResponse>(
-          `${API_URL}/refresh`,
-          {},
-          { withCredentials: true },
-        );
-        localStorage.setItem("accessToken", response.data.accessToken);
-        return api.request(originalRequest);
+        const response = await refresh();
+        localStorage.setItem("accessToken", response.accessToken);
+        return await api.request(originalRequest);
       }
       catch {
         localStorage.removeItem("accessToken");
