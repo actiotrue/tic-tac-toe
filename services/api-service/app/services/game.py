@@ -44,7 +44,7 @@ class GameService:
                     current_rating=player.rating, result=game_in.result, side=side
                 )
                 await uow.players.update_stats(
-                    player.user_id, new_rating, game_in.result, side
+                    player_id=player.user_id, new_rating=new_rating, result=game_in.result, side=side
                 )
         for player in players:
             side = side_map[player.user_id]
