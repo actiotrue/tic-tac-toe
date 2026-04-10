@@ -101,4 +101,4 @@ class PlayerDao(SqlDaoBase):
             rating = $2
         WHERE user_id = $3
         """
-        await self.db.execute(query, result, new_rating, player_id, side)
+        await self.db.execute(query, result.value, new_rating, player_id, side)
