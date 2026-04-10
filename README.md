@@ -9,7 +9,7 @@ A multiplayer Tic-Tac-Toe game built with a microservices architecture.
 ## 🚀 Tech Stack
     Backend: Python 3.14, FastAPI, asyncpg.
     Real-time: Go 1.26, Gorilla WebSocket.
-    Frontend: Vue 3, TypeScript, Vite, Axios.
+    Frontend: Vue 3, TypeScript, Vite, Pinia.
     Data: PostgreSQL (Primary DB), Redis (Caching & Queue).
 
 ## 📝 Getting Started
@@ -20,7 +20,7 @@ git clone https://github.com/Jud1k/tic-tac-toe.git
 2. Install the dependencies:
 ```bash
 cd tic-tac-toe
-pip install -r requirements.txt
+uv venv
 ```
 3. Create a `.env` file in the root directory and add variables by following the `.env.example` file.
 
