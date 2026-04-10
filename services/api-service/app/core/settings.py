@@ -23,7 +23,7 @@ class Settings(BaseSettings):
         f"postgresql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
     )
 
-    REDIS_HOST: str = "localhost"
+    REDIS_HOST: str = "redis"
     REDIS_PORT: int = 6379
     REDIS_URL: str = f"redis://{REDIS_HOST}:{REDIS_PORT}"
 
