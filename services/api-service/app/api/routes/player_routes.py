@@ -76,6 +76,14 @@ async def get_leaderboard(
     return await player_service.get_leaderboard(start, end)
 
 
+@router.post("/batch/service", response_model=list[PlayerRead])
+async def get_batch_players(
+    player_ids: list[uuid.UUID],
+    player_service: PlayerServiceDep,
+):
+    return await player_service.get_players_by_ids(player_ids)
+
+
 @router.get("/{player_id}", response_model=PlayerRead)
 async def get_player(player_id: uuid.UUID, player_service: PlayerServiceDep):
     player = await player_service.get_player_by_id(player_id)

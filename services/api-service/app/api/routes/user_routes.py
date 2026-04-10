@@ -4,11 +4,11 @@ from fastapi import APIRouter, Depends, HTTPException, Request, Response, status
 from fastapi.security import OAuth2PasswordRequestForm
 
 from app.api.deps import CurrentUserDep, UserServiceDep
-from app.schemas.user import UserReadWithoutPassword
+from app.schemas.user import UserReadWithoutPassword, WsTicket
 from app.core.settings import settings
-from app.core.security import create_token, validate_token, verify_password
+from app.core.security import create_token, validate_token
 from app.schemas.base import Message
-from app.schemas.user import Token, UpdatePassword, UserCreate, UserRegister
+from app.schemas.user import Token, UserCreate, UserRegister
 
 router = APIRouter(tags=["Login"])
 
@@ -72,25 +72,6 @@ async def get_me(current_user: CurrentUserDep):
     return current_user
 
 
-@router.patch("/change-password", response_model=Message)
-async def change_password(
-    user_service: UserServiceDep, current_user: CurrentUserDep, body: UpdatePassword
-):
-    verified, _ = verify_password(body.current_password, current_user.hashed_password)
-    if not verified:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Incorrect password",
-        )
-    if body.current_password == body.new_password:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="New password cannot be the same as the current password",
-        )
-    await user_service.update_user_password(current_user.id, body.new_password)
-    return Message(message="Password successfully changed")
-
-
 @router.post("/logout")
 async def logout(response: Response, current_user: CurrentUserDep):
     response.delete_cookie("refresh_token")
@@ -132,3 +113,9 @@ async def refresh_token(request: Request, response: Response):
         max_age=settings.REFRESH_TOKEN_EXPIRE_DAYS * 24 * 60 * 60,
     )
     return Token(access_token=access_token, user_id=payload.get("sub"))
+
+
+@router.post("/ws-ticket", response_model=WsTicket)
+async def get_ws_ticket(current_user: CurrentUserDep, user_service: UserServiceDep):
+    ticket = await user_service.create_ws_ticket(current_user.id)
+    return WsTicket(ticket=ticket)

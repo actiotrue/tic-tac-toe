@@ -15,6 +15,8 @@ class UserDao(SqlDaoBase):
     ) -> User:
         query = """INSERT INTO users (id, username, hashed_password) VALUES ($1, $2, $3) RETURNING *"""
         row = await self.db.fetchrow(query, user_id, username, hashed_password)
+        if not row:
+            raise EntityNotFound("User", user_id)
         user = User.from_row(row)
         logger.info(f"Created user ID: {user.id} Username: {user.username}")
         return user

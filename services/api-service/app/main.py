@@ -14,6 +14,7 @@ from app.exceptions import EntityNotFound
 from app.core.redis import redis_client
 from app.core.settings import settings
 
+
 @asynccontextmanager
 async def lifespan(_: FastAPI):
     await database.connect()

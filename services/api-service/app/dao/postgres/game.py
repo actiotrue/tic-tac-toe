@@ -5,7 +5,7 @@ from loguru import logger
 from app.dao.postgres.base import SqlDaoBase
 from app.models import Game, GamePlayer
 from app.schemas.game import GameCreate, GamePlayerCreate
-
+from app.exceptions import EntityNotFound
 
 class GameDao(SqlDaoBase):
     """GameDao for crud operations on games"""
@@ -35,13 +35,15 @@ class GameDao(SqlDaoBase):
             game_in.result,
             game_in.duration,
         )
+        if not row:
+            raise EntityNotFound("Game", game_in.id)
         game = Game.from_row(row)
         logger.info(f"Created game ID: {game.id}")
         return game
 
     async def create_game_players(
         self, game_id: uuid.UUID, players: list[GamePlayerCreate]
-    ) -> list[Game]:
+    ) -> list[GamePlayer]:
         query = """
         INSERT INTO game_players (game_id, player_id, side, type) 
         VALUES ($1, $2, $3, $4)

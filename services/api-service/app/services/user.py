@@ -1,9 +1,14 @@
 import uuid
 
 from asyncpg import Connection
-from redis import Redis
+from redis.asyncio import Redis
 
-from app.core.security import settings, get_password_hash, verify_password
+from app.core.security import (
+    generate_ws_ticket,
+    settings,
+    get_password_hash,
+    verify_password,
+)
 from app.dao.uow import UnitOfWork
 from app.models import User
 from app.schemas.player import PlayerCreate
@@ -48,7 +53,12 @@ class UserService:
                 await uow.users.update_hashed_password(user.id, updated_password_hash)
         return user
 
-    async def update_user_password(self, user_id: int, password: str) -> User:
+    async def update_user_password(self, user_id: uuid.UUID, password: str) -> User:
         hashed_password = get_password_hash(password)
         async with self.uow as uow:
             return await uow.users.update_hashed_password(user_id, hashed_password)
+
+    async def create_ws_ticket(self, user_id: uuid.UUID) -> str:
+        ticket = generate_ws_ticket()
+        await self.uow.ticket.create(user_id, ticket)
+        return ticket

@@ -9,10 +9,7 @@ T = TypeVar("T", bound="DBModel")
 @dataclass(slots=True)
 class DBModel:
     @classmethod
-    def from_row(cls: type[T], row: Union[Record, None]) -> Optional[T]:
-        if row is None:
-            return None
-
+    def from_row(cls: type[T], row: Record) -> T:
         hints = get_type_hints(cls)
         data = {}
         for field in fields(cls):

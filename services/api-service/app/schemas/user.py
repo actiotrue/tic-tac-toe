@@ -35,3 +35,7 @@ class Token(CustomBaseModel):
     access_token: str
     token_type: str = "bearer"
     user_id: uuid.UUID
+
+
+class WsTicket(CustomBaseModel):
+    ticket: str

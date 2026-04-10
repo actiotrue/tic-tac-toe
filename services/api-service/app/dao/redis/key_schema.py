@@ -6,5 +6,8 @@ class KeySchema:
     a reference to all possible key names used by this application.
     """
 
-    def leaderboard_key(self):
+    def leaderboard_key(self) -> str:
         return "leaderboard"
+
+    def ticket_key(self, ticket: str) -> str:
+        return f"ws_ticket:{ticket}"

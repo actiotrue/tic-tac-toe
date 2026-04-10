@@ -5,11 +5,11 @@ from typing import Annotated, Any, AsyncGenerator
 from fastapi import Depends, HTTPException, Header, status
 from fastapi.security import OAuth2PasswordBearer
 
-from redis import Redis
+from redis.asyncio import Redis
 
 from app.core.database import database
 from app.core.settings import settings
-from app.schemas.user import UserRead, UserReadWithoutPassword
+from app.schemas.user import UserReadWithoutPassword
 from app.services.game import GameService
 from app.services.player import PlayerService
 from app.core.redis import redis_client
@@ -64,7 +64,7 @@ GameServiceDep = Annotated[GameService, Depends(get_game_service)]
 
 async def get_current_user(
     user_service: UserServiceDep, token: str = Depends(oauth2_scheme)
-) -> UserRead:
+) -> UserReadWithoutPassword:
     try:
         payload = jwt.decode(
             token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM]
@@ -85,7 +85,7 @@ async def get_current_user(
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="User not found"
         )
-    return user
+    return UserReadWithoutPassword.model_validate(user)
 
 
 CurrentUserDep = Annotated[UserReadWithoutPassword, Depends(get_current_user)]
@@ -93,7 +93,7 @@ CurrentUserDep = Annotated[UserReadWithoutPassword, Depends(get_current_user)]
 
 def verify_internal_service_key(
     key: str = Header(alias="X-Internal-Service-Key"),
-) -> str:
+) -> bool:
     if key != settings.INTERNAL_SERVICE_KEY:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,

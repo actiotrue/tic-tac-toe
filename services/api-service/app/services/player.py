@@ -1,6 +1,6 @@
 import uuid
 from asyncpg import Connection
-from redis import Redis
+from redis.asyncio import Redis
 
 from app.dao.uow import UnitOfWork
 from app.models import Game, Player
@@ -18,6 +18,10 @@ class PlayerService:
     async def get_player_by_id(self, player_id: uuid.UUID) -> Player | None:
         async with self.uow as uow:
             return await uow.players.get_by_id(player_id)
+
+    async def get_players_by_ids(self, player_ids: list[uuid.UUID]) -> list[Player]:
+        async with self.uow as uow:
+            return await uow.players.get_by_ids(player_ids)
 
     async def get_player_by_username(self, username: str) -> Player | None:
         async with self.uow as uow:
@@ -52,7 +56,7 @@ class PlayerService:
             player_ids = await uow.leaderboard.get_all(start, end)
             if not player_ids:
                 return []
-            players = await uow.players.get_by_ids(player_ids)
+            players = await uow.players.get_by_ids_ordered(player_ids)
             return [
                 PlayerWithRank(**player.to_dict(), rank=start + index + 1)
                 for index, player in enumerate(players)
