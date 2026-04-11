@@ -115,11 +115,11 @@ async function updateUsername(newUsername: string) {
               <div v-else class="flex flex-col items-center gap-2 sm:gap-4 md:items-start lg:flex-row">
                 <div class="flex items-center gap-2 text-center md:text-left">
                   <CalendarIcon class="w-4 h-4 text-gray-400" />
-                  <span class="break-words text-gray-400">Joined {{ currentPlayer ? formatDate(currentPlayer.createdAt) : '' }}</span>
+                  <span class="wrap-break-word text-gray-400">Joined {{ currentPlayer ? formatDate(currentPlayer.createdAt) : '' }}</span>
                 </div>
                 <div class="flex items-center gap-2 text-center md:text-left">
                   <TrophyIcon class="w-4 h-4 text-yellow-400" />
-                  <span class="break-words text-gray-400">Rank: {{ currentPlayer?.rank || 'Failed to load rank' }}</span>
+                  <span class="wrap-break-word text-gray-400">Rank: {{ currentPlayer?.rank || 'Failed to load rank' }}</span>
                 </div>
               </div>
             </div>
