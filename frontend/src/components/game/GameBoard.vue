@@ -17,19 +17,19 @@ const emit = defineEmits<{
 </script>
 
 <template>
-  <div class="flex flex-col max-w-2xl mx-auto space-y-6">
+  <div class="mx-auto flex w-full max-w-2xl flex-col space-y-4 sm:space-y-6">
     <CardContainer class="w-full">
       <CardHeader>
-        <CardTitle class="text-center text-2xl font-bold">
+        <CardTitle class="break-words text-center text-xl font-bold sm:text-2xl">
           {{ statusMessage }}
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div class="grid grid-cols-3 gap-2 sm:gap-3 max-w-md mx-auto aspect-square">
+        <div class="mx-auto grid aspect-square w-full max-w-[min(100%,24rem)] grid-cols-3 gap-2 sm:gap-3">
           <button
             v-for="(cell, index) in board"
             :key="index"
-            class="aspect-square bg-gray-200 rounded-lg text-5xl font-bold flex items-center justify-center"
+            class="flex aspect-square items-center justify-center rounded-lg bg-gray-200 text-3xl font-bold sm:text-5xl"
             :disabled="!!cell || !!props.winner || disabled"
             :class="[
               cell === 'X' ? 'text-blue-600' : 'text-red-600',

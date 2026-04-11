@@ -64,9 +64,9 @@ const emit = defineEmits(["close", "rematch", "newGame", "home"]);
               </div>
 
               <div class="mt-6 mb-8">
-                <div class="flex items-center justify-center gap-2">
+                <div class="flex flex-col items-center justify-center gap-2 sm:flex-row">
                   <span class="text-slate-400 font-medium">Result:</span>
-                  <p class="text-xl font-bold text-indigo-400">
+                  <p class="break-words text-xl font-bold text-indigo-400">
                     {{ result }}
                   </p>
                 </div>
@@ -81,7 +81,7 @@ const emit = defineEmits(["close", "rematch", "newGame", "home"]);
                 >
                   Rematch
                 </button>
-                <div class="grid grid-cols-2 gap-3">
+                <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
                   <button class="py-3 px-4 bg-slate-700 hover:bg-slate-600 text-white font-semibold rounded-xl transition-colors cursor-pointer" @click="emit('newGame')">
                     New Game
                   </button>

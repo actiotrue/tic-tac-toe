@@ -17,11 +17,30 @@
 }
 
 body {
+  margin: 0;
+  min-width: 320px;
   background-color: var(--bg-primary);
   color: var(--text-primary);
   transition:
     background-color 0.3s,
     color 0.3s;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+#app {
+  min-height: 100vh;
+  overflow-x: clip;
+}
+
+img,
+svg,
+canvas {
+  max-width: 100%;
 }
 
 .bg-primary {

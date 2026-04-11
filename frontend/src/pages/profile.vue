@@ -91,16 +91,16 @@ async function updateUsername(newUsername: string) {
 
 <template>
   <AppLayout>
-    <div class="container px-4 py-8">
+    <div class="py-4 sm:py-8">
       <CardContainer class="mb-8">
-        <div class="flex flex-col md:flex-row items-center gap-6 p-6">
+        <div class="flex flex-col items-center gap-6 p-1 sm:p-2 md:flex-row">
           <LoadingSpinner v-if="isLoading" size="sm" />
           <ProfileAvatar
             v-else-if="currentPlayer"
             :image-url="currentPlayer.imageUrl"
             @update="updateAvatar"
           />
-          <div class="flex-1 text-center md:text-left">
+          <div class="min-w-0 flex-1 text-center md:text-left">
             <div>
               <LoadingSpinner v-if="isLoading" size="sm" />
               <EditableUsername
@@ -110,16 +110,16 @@ async function updateUsername(newUsername: string) {
                 @update="updateUsername"
               />
             </div>
-            <div class="flex flex-wrap gap-4 justify-center md:justify-start">
+            <div class="flex flex-wrap justify-center gap-4 md:justify-start">
               <LoadingSpinner v-if="isLoading" size="sm" />
-              <div v-else class="flex flex-col sm:flex-row gap-2 sm:gap-4 items-center md:items-start">
-                <div class="flex items-center gap-2">
+              <div v-else class="flex flex-col items-center gap-2 sm:gap-4 md:items-start lg:flex-row">
+                <div class="flex items-center gap-2 text-center md:text-left">
                   <CalendarIcon class="w-4 h-4 text-gray-400" />
-                  <span class="text-gray-400">Joined {{ currentPlayer ? formatDate(currentPlayer.createdAt) : '' }}</span>
+                  <span class="break-words text-gray-400">Joined {{ currentPlayer ? formatDate(currentPlayer.createdAt) : '' }}</span>
                 </div>
-                <div class="flex items-center gap-2">
+                <div class="flex items-center gap-2 text-center md:text-left">
                   <TrophyIcon class="w-4 h-4 text-yellow-400" />
-                  <span class="text-gray-400">Rank: {{ currentPlayer?.rank || 'Failed to load rank' }}</span>
+                  <span class="break-words text-gray-400">Rank: {{ currentPlayer?.rank || 'Failed to load rank' }}</span>
                 </div>
               </div>
             </div>
@@ -149,7 +149,7 @@ async function updateUsername(newUsername: string) {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div class="flex items-center justify-center max-w-xs mx-auto">
+              <div class="mx-auto flex w-full max-w-xs items-center justify-center">
                 <StatisticChart
                   v-if="!isLoading && currentPlayer"
                   :wins="currentPlayer.wins"

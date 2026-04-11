@@ -45,8 +45,8 @@ onMounted(() => {
 
 <template>
   <div class="w-full space-y-4">
-    <div class="overflow-x-auto max-h-80 overflow-y-auto">
-      <table class="w-full border-collapse text-left">
+    <div class="max-h-80 overflow-auto">
+      <table class="w-full min-w-[24rem] border-collapse text-left sm:min-w-0">
         <thead class="sticky top-0 z-10">
           <tr class="border-b border-gray-800 text-gray-400 text-sm uppercase tracking-wider">
             <th class="py-2 px-2 font-medium w-16">
@@ -76,13 +76,13 @@ onMounted(() => {
             </td>
 
             <td class="py-2 px-2">
-              <div class="flex items-center gap-3">
+              <div class="flex min-w-0 items-center gap-3">
                 <AvatarImage
                   :image-url="player.imageUrl"
                   :placeholder="player.username.charAt(0).toUpperCase()"
                   class="w-10 h-10 rounded-full overflow-hidden bg-gray-800 border border-gray-700"
                 />
-                <span class="font-semibold group-hover:text-violet-400 transition-colors">
+                <span class="truncate font-semibold transition-colors group-hover:text-violet-400">
                   {{ player.username }}
                 </span>
               </div>

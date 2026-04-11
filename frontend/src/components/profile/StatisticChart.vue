@@ -57,15 +57,15 @@ const chartOptions = {
 </script>
 
 <template>
-  <div class="flex-col">
-    <div v-if="props.wins === 0 && props.draws === 0 && props.losses === 0" class="">
-      <ChartPieIcon class="" />
+  <div class="flex w-full flex-col">
+    <div v-if="props.wins === 0 && props.draws === 0 && props.losses === 0" class="flex justify-center">
+      <ChartPieIcon class="h-24 w-24 text-gray-500" />
     </div>
-    <div v-else class="flex items-center justify-center">
+    <div v-else class="flex h-64 w-full items-center justify-center sm:h-72">
       <Pie :data="chartData" :options="chartOptions" />
     </div>
 
-    <div class="flex justify-center gap-4 mt-4">
+    <div class="mt-4 flex flex-wrap justify-center gap-3 sm:gap-4">
       <div class="flex items-center gap-2">
         <div class="w-3 h-3 bg-green-500 rounded-full" />
         <span class="text-sm">Wins ({{ wins }})</span>

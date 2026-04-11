@@ -84,9 +84,9 @@ onUnmounted(() => {
 
 <template>
   <div class="w-full">
-    <div class="rounded-lg shadow-lg overflow-hidden flex flex-col h-100">
+    <div class="flex flex-col overflow-hidden rounded-lg shadow-lg">
       <div class="overflow-x-auto">
-        <table class="w-full text-left border-separate border-spacing-0">
+        <table class="w-full min-w-[42rem] border-separate border-spacing-0 text-left md:min-w-0">
           <thead class="bg-gray-600 text-gray-300 uppercase text-xs font-semibold">
             <tr>
               <th class="px-4 py-3">
@@ -116,7 +116,7 @@ onUnmounted(() => {
               class="transition-colors duration-200" :class="[getRowClass(game)]"
             >
               <td class="px-4 py-3 font-medium text-gray-200">
-                <div class="flex items-center gap-3">
+                <div class="flex min-w-0 items-center gap-3">
                   <AvatarImage
                     :image-url="game.playerX?.player?.imageUrl"
                     :placeholder="game.playerX?.player?.username?.toUpperCase() || '?'"
@@ -127,7 +127,7 @@ onUnmounted(() => {
               </td>
 
               <td class="px-4 py-3 font-medium text-gray-200">
-                <div class="flex items-center gap-3">
+                <div class="flex min-w-0 items-center gap-3">
                   <AvatarImage
                     :image-url="game.playerO?.player?.imageUrl"
                     :placeholder="game.playerO?.player?.username?.toUpperCase() || '?'"
@@ -139,14 +139,14 @@ onUnmounted(() => {
                 </div>
               </td>
 
-              <td class="px-4 py-3">
+              <td class="px-4 py-3 whitespace-nowrap">
                 <span
                   class="px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider bg-black/20 text-white"
                 >
                   {{ getWinnerText(game.result) }}
                 </span>
               </td>
-              <td class="px-4 py-3 text-right text-white tabular-nums">
+              <td class="px-4 py-3 text-right text-white tabular-nums whitespace-nowrap">
                 {{ game.duration }}с
               </td>
             </tr>

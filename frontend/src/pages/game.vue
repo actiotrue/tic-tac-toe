@@ -17,7 +17,7 @@ const mode = computed<GameMode>(() => {
 
 <template>
   <AppLayout>
-    <div class="container">
+    <div class="w-full">
       <GameVsPlayer v-if="mode === 'pvp'" />
       <GameVsAI v-else />
     </div>

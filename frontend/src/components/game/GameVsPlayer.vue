@@ -98,7 +98,7 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div class="flex flex-col items-center justify-center min-h-[80vh] p-4">
+  <div class="flex min-h-[70vh] w-full flex-col items-center justify-center px-0 py-4 sm:min-h-[80vh] sm:px-4">
     <div v-if="error" class="p-4 mb-4 text-red-500 bg-red-100 rounded-lg animate-pulse">
       {{ error }}
     </div>
@@ -118,7 +118,7 @@ onBeforeUnmount(() => {
     <div v-else-if="gameStatus === GameStatus.Playing || gameStatus === GameStatus.Finished" class="w-full">
       <div class="mb-4">
         <TurnTimer v-if="gameStatus === GameStatus.Playing" :seconds="timer.secondsLeft.value" />
-        <span v-else-if="gameStatus === GameStatus.Finished" class="flex items-center justify-center text-lg">
+        <span v-else-if="gameStatus === GameStatus.Finished" class="flex items-center justify-center text-center text-base sm:text-lg">
           Игра окончена
         </span>
       </div>

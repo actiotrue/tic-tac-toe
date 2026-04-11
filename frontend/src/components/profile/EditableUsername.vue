@@ -53,9 +53,9 @@ function onBlur() {
 </script>
 
 <template>
-  <div class="flex items-center gap-3 mb-2 md:justify-start">
+  <div class="mb-2 flex flex-wrap items-center justify-center gap-3 md:justify-start">
     <template v-if="!isEditing">
-      <h1 class="text-3xl font-bold">
+      <h1 class="break-all text-2xl font-bold sm:text-3xl">
         {{ props.username }}
       </h1>
       <button
@@ -66,7 +66,7 @@ function onBlur() {
       </button>
     </template>
 
-    <form v-else class="items-center gap-3" @submit.prevent="onSubmit">
+    <form v-else class="w-full max-w-sm items-center gap-3" @submit.prevent="onSubmit">
       <span v-if="errors.username" class="text-red-500 text-sm mb-1 block">
         {{ errors.username }}
       </span>

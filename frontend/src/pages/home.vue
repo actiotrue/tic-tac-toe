@@ -28,35 +28,35 @@ function startGame(mode: "pvp" | "pve") {
 
 <template>
   <AppLayout>
-    <div class="container px-2 py-8">
-      <div class="max-w-6xl space-y-8">
+    <div class="py-4 sm:py-8">
+      <div class="mx-auto w-full max-w-6xl space-y-6 sm:space-y-8">
         <div class="text-center space-y-4">
-          <h1 class="text-5xl font-bold">
+          <h1 class="text-4xl font-bold sm:text-5xl">
             Tic Tac Toe
           </h1>
-          <p class="text-lg text-gray-400">
+          <p class="mx-auto max-w-2xl text-base text-gray-400 sm:text-lg">
             Just tic tac toe. If you don't interesting go away.
           </p>
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 mx-auto w-full max-w-2xl">
           <button
-            class="cursor-pointer text-white bg-violet-400 w-full rounded-md text-base sm:text-lg px-4 sm:px-8 py-3 flex items-center gap-3 justify-center"
+            class="flex w-full items-center justify-center gap-3 rounded-md bg-violet-400 px-4 py-3 text-base text-white sm:px-8 sm:text-lg"
             @click="startGame('pvp')"
           >
             <PlayIcon class="w-6 h-6" />
-            Play against people
+            <span class="text-center">Play against people</span>
           </button>
           <button
-            class="cursor-pointer text-white bg-violet-400 w-full rounded-md text-base sm:text-lg px-4 sm:px-8 py-3 flex items-center gap-3 justify-center"
+            class="flex w-full items-center justify-center gap-3 rounded-md bg-violet-400 px-4 py-3 text-base text-white sm:px-8 sm:text-lg"
             @click="startGame('pve')"
           >
             <PlayIcon class="w-6 h-6" />
-            Play against AI
+            <span class="text-center">Play against AI</span>
           </button>
         </div>
 
-        <div class="grid md:grid-cols-2 gap-12">
+        <div class="grid gap-6 md:grid-cols-2 lg:gap-10">
           <CardContainer v-if="authStore.isLoggedIn">
             <CardHeader>
               <CardTitle class="flex items-center gap-2">
