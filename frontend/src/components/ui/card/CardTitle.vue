@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { cn } from "@/components/utils";
+import { cn } from "@/lib/utils";
 
 defineProps<{
   className?: string;

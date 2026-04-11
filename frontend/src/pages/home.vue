@@ -70,6 +70,7 @@ function startGame(mode: "pvp" | "pve") {
               </CardDescription>
             </CardHeader>
             <CardContent />
+            <!-- <OngoingGames /> -->
           </CardContainer>
           <CardContainer v-else>
             <CardHeader>
