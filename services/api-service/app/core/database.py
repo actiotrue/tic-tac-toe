@@ -24,4 +24,4 @@ class Database:
         await self.pool.close()
 
 
-database = Database(settings.DATABASE_URL)
+database = Database(settings.database_url)

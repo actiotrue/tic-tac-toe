@@ -6,6 +6,7 @@ import { getRecentGames } from "@/api/player";
 import { useAuth } from "@/store/auth.store";
 import { getErrorMessage } from "@/utils";
 import AvatarImage from "../AvatarImage.vue";
+import LoadingSpinner from "../ui/LoadingSpinner.vue";
 import { getWinnerText } from "./utils";
 
 const games = ref<GameDetails[]>([]);
@@ -84,7 +85,7 @@ onUnmounted(() => {
 <template>
   <div class="w-full">
     <div class="rounded-lg shadow-lg overflow-hidden flex flex-col h-100">
-      <div class="overflow-y-auto w-full">
+      <div class="overflow-x-auto">
         <table class="w-full text-left border-separate border-spacing-0">
           <thead class="bg-gray-600 text-gray-300 uppercase text-xs font-semibold">
             <tr>
@@ -155,7 +156,7 @@ onUnmounted(() => {
           ref="loadMoreTrigger"
           class="w-full py-4 flex justify-center items-center text-sm text-gray-400"
         >
-          <Spinner v-if="isLoading" size="sm" />
+          <LoadingSpinner v-if="isLoading" size="sm" />
         </div>
       </div>
     </div>

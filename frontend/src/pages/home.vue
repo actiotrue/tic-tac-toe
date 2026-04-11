@@ -39,16 +39,16 @@ function startGame(mode: "pvp" | "pve") {
           </p>
         </div>
 
-        <div class="grid grid-cols-2 gap-5 mx-auto w-max">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 mx-auto w-full max-w-2xl">
           <button
-            class="cursor-pointer text-white bg-violet-400 w-full rounded-md text-lg px-8 py-3 flex items-center gap-3 justify-center"
+            class="cursor-pointer text-white bg-violet-400 w-full rounded-md text-base sm:text-lg px-4 sm:px-8 py-3 flex items-center gap-3 justify-center"
             @click="startGame('pvp')"
           >
             <PlayIcon class="w-6 h-6" />
             Play against people
           </button>
           <button
-            class="cursor-pointer text-white bg-violet-400 w-full rounded-md text-lg px-8 py-3 flex items-center gap-3 justify-center"
+            class="cursor-pointer text-white bg-violet-400 w-full rounded-md text-base sm:text-lg px-4 sm:px-8 py-3 flex items-center gap-3 justify-center"
             @click="startGame('pve')"
           >
             <PlayIcon class="w-6 h-6" />

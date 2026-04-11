@@ -2,7 +2,11 @@ import { defineStore } from "pinia";
 import { ref, watch } from "vue";
 
 export const useTheme = defineStore("theme", () => {
-  const theme = ref<string>(localStorage.getItem("theme") || "dark");
+  const theme = ref<string>(
+    localStorage.getItem("theme")
+    || document.documentElement.getAttribute("data-theme")
+    || "light",
+  );
 
   const toggleTheme = () => {
     theme.value = theme.value === "dark" ? "light" : "dark";
@@ -10,22 +14,19 @@ export const useTheme = defineStore("theme", () => {
 
   const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
 
-  const updateFromSystem = () => {
-    if (!localStorage.getItem("color-scheme")) {
-      theme.value = mediaQuery.matches ? "dark" : "light";
+  mediaQuery.addEventListener("change", (e) => {
+    if (!localStorage.getItem("theme")) {
+      document.documentElement.setAttribute(
+        "data-theme",
+        e.matches ? "dark" : "light",
+      );
     }
-  };
+  });
 
-  mediaQuery.addEventListener("change", updateFromSystem);
-
-  watch(
-    theme,
-    () => {
-      localStorage.setItem("theme", theme.value);
-      document.documentElement.style.colorScheme = theme.value;
-    },
-    { immediate: true },
-  );
+  watch(theme, (val) => {
+    localStorage.setItem("theme", val);
+    document.documentElement.setAttribute("data-theme", val);
+  });
 
   return {
     theme,

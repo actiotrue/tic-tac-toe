@@ -64,3 +64,9 @@ export function findWinningMove(board: GameBoard, symbol: PlayerSymbol): number 
   }
   return -1;
 }
+
+export function getWinnerText(winner: Winner, side: PlayerSymbol): string {
+  if (winner === "draw")
+    return "Draw";
+  return winner === side ? "You win! 🎉" : "You lose! 😭";
+}

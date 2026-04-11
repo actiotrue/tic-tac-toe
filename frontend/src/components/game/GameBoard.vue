@@ -25,7 +25,7 @@ const emit = defineEmits<{
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div class="grid grid-cols-3 gap-3 max-w-md mx-auto aspect-square">
+        <div class="grid grid-cols-3 gap-2 sm:gap-3 max-w-md mx-auto aspect-square">
           <button
             v-for="(cell, index) in board"
             :key="index"
@@ -35,7 +35,7 @@ const emit = defineEmits<{
               cell === 'X' ? 'text-blue-600' : 'text-red-600',
               props.winningLine?.includes(index) ? 'bg-green-400' : 'bg-gray-200',
               {
-                'cursor-pointer hover:opacity-80 transition-all':
+                'cursor-pointer hover:opacity-80 active:scale-95 transition-all':
                   !cell && !props.winner && !disabled,
                 'cursor-not-allowed': disabled && !props.winner,
               },
