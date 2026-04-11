@@ -8,8 +8,15 @@ services:
     environment:
       PYTHONPATH: /app    
       DATABASE_URL: postgresql://postgres:postgres@db:5432/tic-tac-toe
+      DB_HOST: db
+      DB_PORT: ${DB_PORT}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_NAME: ${DB_NAME}
+
       REDIS_HOST: redis
-      REDIS_PORT: 6379
+      REDIS_PORT: ${REDIS_PORT}
+      
       INTERNAL_SERVICE_KEY: ${INTERNAL_SERVICE_KEY}
       CLOUDINARY_BASE_IMAGE_PUBLIC_ID: ${CLOUDINARY_BASE_IMAGE_PUBLIC_ID}
       REFRESH_TOKEN_EXPIRE_DAYS: ${REFRESH_TOKEN_EXPIRE_DAYS}
