@@ -3,7 +3,7 @@ import type { RankedPlayer } from "@/types/player";
 
 import { onMounted, ref } from "vue";
 import { getLeaderboard } from "@/api/player";
-import Spinner from "@/components/ui/Spinner.vue";
+import LoadingSpinner from "@/components/ui/LoadingSpinner.vue";
 import AvatarImage from "./AvatarImage.vue";
 
 const limit = 3;
@@ -95,7 +95,6 @@ onMounted(() => {
       </table>
     </div>
 
-    <!-- Кнопка управления -->
     <div class="flex justify-center pt-2">
       <button
         v-if="!allLoaded"
@@ -103,7 +102,7 @@ onMounted(() => {
         class="text-sm font-medium text-violet-400 hover:text-violet-300 disabled:opacity-50 flex items-center gap-2 transition-all"
         @click="loadPlayers"
       >
-        <Spinner v-if="isLoading" size="sm" />
+        <LoadingSpinner v-if="isLoading" size="sm" />
         <span v-if="!isLoading">Load More Players</span>
         <span v-else>Loading...</span>
       </button>

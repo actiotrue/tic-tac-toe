@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import type { PlayerSymbol } from "../../types/game";
+import { ArrowPathIcon } from "@heroicons/vue/24/solid";
 import { uuidv7 } from "uuidv7";
 import { computed, onMounted, ref, watch } from "vue";
 import { createGame } from "@/api/game";

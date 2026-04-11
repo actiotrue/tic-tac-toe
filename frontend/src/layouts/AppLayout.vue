@@ -1,14 +1,16 @@
 <script setup lang="ts">
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/vue";
-import { ChevronDownIcon } from "@heroicons/vue/20/solid";
+import { Bars3Icon, ChevronDownIcon, XMarkIcon } from "@heroicons/vue/20/solid";
+import { ref } from "vue";
 import AuthModal from "@/components/auth/AuthModal.vue";
+import ThemeSwitch from "@/components/ThemeSwitch.vue";
 import { useAuthModal } from "@/composables/useAuthModal";
 import { useAuth } from "@/store/auth.store";
-import { useTheme } from "@/store/theme.store";
 
-const themeStore = useTheme();
 const authStore = useAuth();
 const { openAuthModal } = useAuthModal();
+
+const isMobileMenuOpen = ref(false);
 
 async function logout() {
   await authStore.logout();
@@ -22,57 +24,25 @@ async function logout() {
       <div class="container mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex items-center justify-between h-16">
           <div class="flex items-center space-x-3">
-            <RouterLink
-              to="/"
-              class="flex items-center space-x-3 hover:opacity-80 transition-opacity"
-            >
-              <picture>
-                <source srcset="/logo.svg" media="(prefer-color-scheme: dark)">
-                <img src="/logo.svg" alt="Tic Tac Toe Logo" class="w-12 h-12">
-              </picture>
-              <span class="text-xl font-bold"> Tic Tac Toe </span>
+            <RouterLink to="/" class="text-lg sm:text-xl font-bold">
+              Tic Tac Toe
             </RouterLink>
           </div>
 
-          <div class="flex items-center space-x-4">
-            <button
-              class="p-2.5 rounded-full flex items-center space-x-2 cursor-pointer transition-all duration-300 hover:shadow-md group"
-              @click="themeStore.toggleTheme"
-            >
-              <div class="relative w-5 h-5">
-                <svg
-                  v-if="themeStore.theme === 'dark'"
-                  class="w-5 h-5 text-yellow-300"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                >
-                  <path
-                    fill-rule="evenodd"
-                    d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z"
-                    clip-rule="evenodd"
-                  />
-                </svg>
-                <svg v-else class="w-5 h-5 text-blue-900" fill="currentColor" viewBox="0 0 20 20">
-                  <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z" />
-                </svg>
-              </div>
-            </button>
-
-            <div v-if="!authStore.isLoggedIn" class="flex items-center space-x-3">
-              <button
-                class="cursor-pointer px-4 py-2 text-sm font-medium hover:text-gray-400"
-                @click="openAuthModal('login')"
-              >
+          <div class="hidden md:flex items-center space-x-4">
+            <ThemeSwitch />
+            <template v-if="!authStore.isLoggedIn">
+              <button class="cursor-pointer px-3 py-2 text-sm hover:text-gray-400" @click="openAuthModal('login')">
                 Log in
               </button>
               <button
-                class="cursor-pointer px-4 py-2 text-sm font-medium rounded-lg transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
+                class="cursor-pointer px-3 py-2 text-sm font-medium rounded-lg shadow-md hover:shadow-lg duration-300 transform hover:-translate-y-0.5"
                 @click="openAuthModal('signup')"
               >
                 Sign up
               </button>
-            </div>
-            <div v-else class="flex items-center space-x-3">
+            </template>
+            <template v-else>
               <Menu as="div" class="relative inline-block text-left">
                 <div>
                   <MenuButton
@@ -124,19 +94,62 @@ async function logout() {
                   </MenuItems>
                 </transition>
               </Menu>
+            </template>
+          </div>
+          <button class="md:hidden" @click="isMobileMenuOpen = !isMobileMenuOpen">
+            <Bars3Icon v-if="!isMobileMenuOpen" class="w-6 h-6" />
+            <XMarkIcon v-else class="w-6 h-6" />
+          </button>
+        </div>
+
+        <div v-if="isMobileMenuOpen" class="md:hidden mt-4 space-y-3 pb-4">
+          <div class="bg-gray-50 dark:bg-gray-800/50 rounded-2xl p-4 border border-gray-100 dark:border-gray-700/50 space-y-1">
+            <div class="flex items-center justify-between pb-3 mb-2 border-b border-gray-200 dark:border-gray-700">
+              <span class="text-sm font-medium text-gray-500">Настройки</span>
+              <ThemeSwitch />
             </div>
+
+            <template v-if="!authStore.isLoggedIn">
+              <button
+                class="block w-full text-left px-4 py-3 rounded-xl transition-colors active:bg-gray-200 dark:active:bg-gray-700 font-medium"
+                @click="openAuthModal('login')"
+              >
+                Log in
+              </button>
+              <button
+                class="block w-full text-left px-4 py-3 rounded-xl transition-colors active:bg-gray-200 dark:active:bg-gray-700 font-medium"
+                @click="openAuthModal('signup')"
+              >
+                Sign up
+              </button>
+            </template>
+
+            <template v-else>
+              <RouterLink
+                to="/profile"
+                class="block w-full px-4 py-3 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors font-medium text-gray-700 dark:text-gray-200"
+              >
+                Profile
+              </RouterLink>
+              <button
+                class="block w-full text-left px-4 py-3 rounded-xl text-red-500 font-medium active:bg-red-50 dark:active:bg-red-900/20 transition-colors"
+                @click="logout"
+              >
+                Sign out
+              </button>
+            </template>
           </div>
         </div>
       </div>
     </nav>
-    <main class="grow container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <main class="grow container mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
       <div class="max-w-6xl mx-auto">
         <slot />
       </div>
     </main>
     <footer class="border-t border-custom-transparent">
       <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex flex-col items-center justify-center space-y-4 mt-4 mb-4 text-center">
+        <div class="flex flex-col container mx-auto px-4 py-6 text-center items-center justify-center space-y-4">
           <p class="text-sm">
             Created with ❤️ by Jud1k
           </p>
@@ -155,7 +168,6 @@ async function logout() {
               />
             </svg>
           </a>
-
           <span class="text-sm"> Tic Tac Toe © {{ new Date().getFullYear() }} </span>
         </div>
       </div>

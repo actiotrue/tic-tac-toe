@@ -5,12 +5,13 @@ import { useOnlineGame } from "@/composables/useOnlineGame";
 import quizData from "../../questions.json";
 import { GameStatus } from "../../types/game";
 import AvatarImage from "../AvatarImage.vue";
-import Spinner from "../ui/Spinner.vue";
+import LoadingSpinner from "../ui/LoadingSpinner.vue";
 import GameBoard from "./GameBoard.vue";
 import GameResultModal from "./GameResultModal.vue";
 import Quiz from "./Quiz.vue";
 import SearchingTimer from "./SearchingTimer.vue";
 import TurnTimer from "./TurnTimer.vue";
+import { getWinnerText } from "./utils";
 
 const {
   game,
@@ -54,16 +55,21 @@ const isMeReady = computed<boolean>(() => {
 });
 
 const statusMessage = computed<string>(() => {
-  if (game.winner.value) {
-    if (game.winner.value === "draw")
-      return "Draw";
-    return game.winner.value === playerSide.value ? "You win! 🎉" : "You lose! 😭";
+  if (game.winner.value && playerSide.value) {
+    return getWinnerText(game.winner.value, playerSide.value);
   }
   else {
     if (game.currentPlayerSymbol.value === playerSide.value)
       return `Your turn ${game.currentPlayerSymbol.value}`;
     return `Opponent turn ${game.currentPlayerSymbol.value}`;
   }
+});
+
+const resultText = computed<string>(() => {
+  if (game.winner.value && playerSide.value) {
+    return getWinnerText(game.winner.value, playerSide.value);
+  }
+  return "Wrong result";
 });
 
 function handleHome() {
@@ -97,7 +103,7 @@ onBeforeUnmount(() => {
       {{ error }}
     </div>
     <div v-if="gameStatus === GameStatus.Waiting" class="flex flex-col items-center gap-4">
-      <Spinner size="lg" />
+      <LoadingSpinner size="lg" />
       <span class="text-gray-400">Подключение к серверу...</span>
     </div>
     <div v-else-if="gameStatus === GameStatus.Searching" class="w-full max-w-md space-y-6">
@@ -128,7 +134,7 @@ onBeforeUnmount(() => {
     </div>
     <GameResultModal
       :is-open="isGameOver"
-      :result="game.winner.value"
+      :result="resultText"
       :is-rematch="isMeReady || isGameClosed"
       @rematch="handleRematch"
       @new-game="handleNewGame"

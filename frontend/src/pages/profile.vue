@@ -10,12 +10,12 @@ import { onMounted, ref } from "vue";
 import { toast } from "vue3-toastify";
 import { getPlayerWithRank, updatePlayer } from "@/api/player";
 import { deleteFromCloudinary, uploadToCloudinary } from "@/cloudinary";
-import Avatar from "@/components/profile/Avatar.vue";
 import EditableUsername from "@/components/profile/EditableUsername.vue";
+import ProfileAvatar from "@/components/profile/ProfileAvatar.vue";
 import RecentGames from "@/components/profile/RecentGames.vue";
 import StatisticChart from "@/components/profile/StatisticChart.vue";
 import { CardContainer, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import Spinner from "@/components/ui/Spinner.vue";
+import LoadingSpinner from "@/components/ui/LoadingSpinner.vue";
 import AppLayout from "@/layouts/AppLayout.vue";
 import { formatDate, getErrorMessage } from "@/utils";
 
@@ -94,15 +94,15 @@ async function updateUsername(newUsername: string) {
     <div class="container px-4 py-8">
       <CardContainer class="mb-8">
         <div class="flex flex-col md:flex-row items-center gap-6 p-6">
-          <Spinner v-if="isLoading" size="sm" />
-          <Avatar
+          <LoadingSpinner v-if="isLoading" size="sm" />
+          <ProfileAvatar
             v-else-if="currentPlayer"
             :image-url="currentPlayer.imageUrl"
             @update="updateAvatar"
           />
           <div class="flex-1 text-center md:text-left">
             <div>
-              <Spinner v-if="isLoading" size="sm" />
+              <LoadingSpinner v-if="isLoading" size="sm" />
               <EditableUsername
                 v-else-if="currentPlayer"
                 :username="currentPlayer.username"
@@ -111,8 +111,8 @@ async function updateUsername(newUsername: string) {
               />
             </div>
             <div class="flex flex-wrap gap-4 justify-center md:justify-start">
-              <Spinner v-if="isLoading" size="sm" />
-              <div v-else class="flex gap-3">
+              <LoadingSpinner v-if="isLoading" size="sm" />
+              <div v-else class="flex flex-col sm:flex-row gap-2 sm:gap-4 items-center md:items-start">
                 <div class="flex items-center gap-2">
                   <CalendarIcon class="w-4 h-4 text-gray-400" />
                   <span class="text-gray-400">Joined {{ currentPlayer ? formatDate(currentPlayer.createdAt) : '' }}</span>
@@ -149,14 +149,14 @@ async function updateUsername(newUsername: string) {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div class="flex items-center justify-center">
+              <div class="flex items-center justify-center max-w-xs mx-auto">
                 <StatisticChart
                   v-if="!isLoading && currentPlayer"
                   :wins="currentPlayer.wins"
                   :draws="currentPlayer.draws"
                   :losses="currentPlayer.losses"
                 />
-                <Spinner v-else-if="isLoading" size="md" />
+                <LoadingSpinner v-else-if="isLoading" size="md" />
               </div>
             </CardContent>
           </CardContainer>

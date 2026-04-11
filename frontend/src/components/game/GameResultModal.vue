@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import type { Winner } from "@/types/game";
 import {
   Dialog,
   DialogPanel,
@@ -11,7 +10,7 @@ import {
 defineProps<{
   isOpen: boolean;
   isRematch: boolean;
-  result: Winner | null;
+  result: string;
 }>();
 
 const emit = defineEmits(["close", "rematch", "newGame", "home"]);
@@ -44,18 +43,18 @@ const emit = defineEmits(["close", "rematch", "newGame", "home"]);
             leave-to="opacity-0 scale-95"
           >
             <DialogPanel
-              class="w-full max-w-md transform overflow-hidden rounded-3xl bg-slate-800 border border-slate-700 p-8 text-center shadow-2xl transition-all"
+              class="w-full max-w-md transform overflow-hidden rounded-3xl bg-slate-800 border border-slate-700 p-5 sm:p-8 text-center shadow-2xl transition-all"
             >
               <DialogTitle as="h3" class="text-2xl font-black uppercase tracking-wider text-white">
                 Game Over
               </DialogTitle>
 
-              <div class="mt-8 flex items-center justify-between gap-8">
+              <div class="mt-8 flex flex-col sm:flex-row items-center justify-center sm:justify-between gap-6 sm:gap-8">
                 <div class="relative flex flex-col items-center gap-3 flex-1">
                   <slot name="player-left" />
                 </div>
 
-                <div class="text-4xl font-black text-slate-600 shrink-0">
+                <div class="text-xl sm:text-4xl font-black text-slate-600 shrink-0 my-2 sm:my-0">
                   VS
                 </div>
 
