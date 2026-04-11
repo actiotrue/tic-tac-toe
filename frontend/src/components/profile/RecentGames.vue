@@ -85,8 +85,8 @@ onUnmounted(() => {
 <template>
   <div class="w-full">
     <div class="flex flex-col overflow-hidden rounded-lg shadow-lg">
-      <div class="overflow-x-auto">
-        <table class="w-full min-w-[42rem] border-separate border-spacing-0 text-left md:min-w-0">
+      <div class="w-full overflow-x-auto overscroll-x-contain [touch-action:pan-x]">
+        <table class="min-w-[42rem] border-separate border-spacing-0 text-left">
           <thead class="bg-gray-600 text-gray-300 uppercase text-xs font-semibold">
             <tr>
               <th class="px-4 py-3">
@@ -154,7 +154,7 @@ onUnmounted(() => {
         </table>
         <div
           ref="loadMoreTrigger"
-          class="w-full py-4 flex justify-center items-center text-sm text-gray-400"
+          class="flex min-w-[42rem] items-center justify-center py-4 text-sm text-gray-400"
         >
           <LoadingSpinner v-if="isLoading" size="sm" />
         </div>

@@ -148,8 +148,8 @@ async function updateUsername(newUsername: string) {
                 <SparklesIcon class="w-6 h-6" /> Game Distribution
               </CardTitle>
             </CardHeader>
-            <CardContent>
-              <div class="mx-auto flex w-full max-w-xs items-center justify-center">
+            <CardContent class="pt-2">
+              <div class="mx-auto flex w-full items-center justify-center">
                 <StatisticChart
                   v-if="!isLoading && currentPlayer"
                   :wins="currentPlayer.wins"

@@ -57,26 +57,26 @@ const chartOptions = {
 </script>
 
 <template>
-  <div class="flex w-full flex-col">
+  <div class="flex w-full flex-col items-center">
     <div v-if="props.wins === 0 && props.draws === 0 && props.losses === 0" class="flex justify-center">
       <ChartPieIcon class="h-24 w-24 text-gray-500" />
     </div>
-    <div v-else class="flex h-64 w-full items-center justify-center sm:h-72">
+    <div v-else class="flex h-56 w-full max-w-[18rem] items-center justify-center sm:h-64 sm:max-w-[20rem]">
       <Pie :data="chartData" :options="chartOptions" />
     </div>
 
-    <div class="mt-4 flex flex-wrap justify-center gap-3 sm:gap-4">
-      <div class="flex items-center gap-2">
+    <div class="mt-4 flex w-full items-center justify-between gap-2 whitespace-nowrap text-xs sm:text-sm">
+      <div class="flex items-center gap-1.5 sm:gap-2">
         <div class="w-3 h-3 bg-green-500 rounded-full" />
-        <span class="text-sm">Wins ({{ wins }})</span>
+        <span>Wins ({{ wins }})</span>
       </div>
-      <div class="flex items-center gap-2">
+      <div class="flex items-center gap-1.5 sm:gap-2">
         <div class="w-3 h-3 bg-red-500 rounded-full" />
-        <span class="text-sm">Losses ({{ losses }})</span>
+        <span>Losses ({{ losses }})</span>
       </div>
-      <div class="flex items-center gap-2">
+      <div class="flex items-center gap-1.5 sm:gap-2">
         <div class="w-3 h-3 bg-yellow-500 rounded-full" />
-        <span class="text-sm">Draws ({{ draws }})</span>
+        <span>Draws ({{ draws }})</span>
       </div>
     </div>
   </div>
