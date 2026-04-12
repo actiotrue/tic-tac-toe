@@ -2,6 +2,7 @@
 import { GlobeAmericasIcon, PlayIcon, TrophyIcon, UserIcon } from "@heroicons/vue/24/solid";
 import { useRouter } from "vue-router";
 import Leaderboard from "@/components/Leaderboard.vue";
+import OngoingGames from "@/components/OngoingGames.vue";
 import {
   CardContainer,
   CardContent,
@@ -69,8 +70,9 @@ function startGame(mode: "pvp" | "pve") {
                 </p>
               </CardDescription>
             </CardHeader>
-            <CardContent />
-            <!-- <OngoingGames /> -->
+            <CardContent>
+              <OngoingGames />
+            </CardContent>
           </CardContainer>
           <CardContainer v-else>
             <CardHeader>
