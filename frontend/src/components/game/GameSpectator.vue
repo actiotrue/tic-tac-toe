@@ -92,7 +92,7 @@ onMounted(() => {
         :status-message="statusMessage"
       />
 
-      <div class="mt-6 flex items-center justify-center gap-8 text-sm text-gray-300">
+      <div class="mt-6 flex items-center justify-center gap-8 text-sm">
         <div class="flex items-center gap-2">
           <AvatarImage
             :image-url="firstPlayer?.imageUrl"
@@ -102,7 +102,7 @@ onMounted(() => {
           />
           <span>{{ firstPlayer?.username || "Player X" }}</span>
         </div>
-        <div class="text-xs uppercase tracking-wide text-gray-500">
+        <div class="text-xs uppercase tracking-wide">
           vs
         </div>
         <div class="flex items-center gap-2">
@@ -118,7 +118,7 @@ onMounted(() => {
 
       <div class="mt-6 flex justify-center">
         <button
-          class="rounded-md bg-violet-400 px-4 py-2 text-sm text-white"
+          class="cursor-pointer rounded-md bg-violet-400 px-4 py-2 text-sm text-white"
           @click="goHome"
         >
           Back to home

@@ -104,13 +104,13 @@ onBeforeUnmount(() => {
     </div>
     <div v-if="gameStatus === GameStatus.Waiting" class="flex flex-col items-center gap-4">
       <LoadingSpinner size="lg" />
-      <span class="text-gray-400">Подключение к серверу...</span>
+      <span class="text-gray-400">Connecting to the server...</span>
     </div>
     <div v-else-if="gameStatus === GameStatus.Searching" class="w-full max-w-md space-y-6">
       <div class="flex flex-col items-center p-6 timer-background rounded-2xl backdrop-blur-sm">
         <SearchingTimer />
         <p class="mt-2 text-sm text-gray-400">
-          Ищем соперника...
+          Finding a opponent...
         </p>
       </div>
       <Quiz :questions="quizData" />

@@ -3,13 +3,7 @@ import { GlobeAmericasIcon, PlayIcon, TrophyIcon, UserIcon } from "@heroicons/vu
 import { useRouter } from "vue-router";
 import Leaderboard from "@/components/Leaderboard.vue";
 import OngoingGames from "@/components/OngoingGames.vue";
-import {
-  CardContainer,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+
 import { useAuthModal } from "@/composables/useAuthModal";
 import AppLayout from "@/layouts/AppLayout.vue";
 import { useAuth } from "@/store/auth.store";
@@ -58,55 +52,56 @@ function startGame(mode: "pvp" | "pve") {
         </div>
 
         <div class="grid gap-6 md:grid-cols-2 lg:gap-10">
-          <CardContainer v-if="authStore.isLoggedIn">
-            <CardHeader>
-              <CardTitle class="flex items-center gap-2">
+          <div v-if="authStore.isLoggedIn" class="space-y-4">
+            <div>
+              <div class="flex items-center gap-2 text-lg font-semibold">
                 <GlobeAmericasIcon class="w-6 h-6" />
-                Ongoing games
-              </CardTitle>
-              <CardDescription>
-                <p class="text-gray-400">
-                  See how other players play
-                </p>
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
+                <span>Ongoing games</span>
+              </div>
+              <p class="text-gray-400 text-sm">
+                See how other players play
+              </p>
+            </div>
+
+            <div class="rounded-xl bg-gray-800/40 p-4">
               <OngoingGames />
-            </CardContent>
-          </CardContainer>
-          <CardContainer v-else>
-            <CardHeader>
-              <CardTitle class="flex items-center gap-2">
+            </div>
+          </div>
+          <div v-else class="space-y-4">
+            <div>
+              <div class="flex items-center gap-2 text-lg font-semibold">
                 <UserIcon class="w-6 h-6" />
-                <h3 class="font-semibold">
-                  Create an Account
-                </h3>
-              </CardTitle>
-              <CardDescription>Track your stats and compete!</CardDescription>
-            </CardHeader>
-            <CardContent class="space-y-4">
-              <p class="text-gray-400">
+                <span>Create an Account</span>
+              </div>
+              <p class="text-gray-400 text-sm">
+                Track your stats and compete!
+              </p>
+            </div>
+
+            <div class="rounded-xl bg-gray-800/40 p-4 space-y-4">
+              <p>
                 Sign up to save your progress, track your wins, and climb the leaderboard!
               </p>
+
               <button
-                class="cursor-pointer text-white w-full py-2 rounded-md items-center bg-violet-400 justify-center"
+                class="w-full py-2 rounded-md bg-violet-400 text-white transition hover:bg-violet-500"
                 @click="openAuthModal('signup')"
               >
                 Get Started
               </button>
-            </CardContent>
-          </CardContainer>
+            </div>
+          </div>
 
-          <CardContainer>
-            <CardHeader>
-              <CardTitle class="flex items-center gap-2 font-semibold">
-                <TrophyIcon class="w-6 h-6 text-yellow-400" />Leaderboard
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
+          <div class="space-y-4">
+            <div class="flex items-center gap-2 font-semibold text-lg">
+              <TrophyIcon class="w-6 h-6 text-yellow-400" />
+              <span>Leaderboard</span>
+            </div>
+
+            <div class="rounded-xl bg-gray-800/40 p-4">
               <Leaderboard />
-            </CardContent>
-          </CardContainer>
+            </div>
+          </div>
         </div>
       </div>
     </div>

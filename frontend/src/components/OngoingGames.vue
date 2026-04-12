@@ -54,22 +54,27 @@ onBeforeUnmount(() => {
     </div>
 
     <div v-else-if="error" class="space-y-3 rounded-md border border-red-500/20 bg-red-500/10 p-3">
-      <p class="text-sm text-red-200">
+      <p class="text-sm text-red-200 text-center">
         {{ error }}
       </p>
       <button
-        class="w-full rounded-md bg-violet-400 px-3 py-2 text-sm text-white"
+        class="cursor-pointer bg-violet-400 px-3 py-2 text-sm text-white w-full"
         @click="connect"
       >
         Retry
       </button>
     </div>
 
-    <div v-else-if="!hasGames" class="rounded-md border border-white/10 bg-black/20 p-3 text-sm text-gray-400">
+    <div v-else-if="!hasGames" class="text-sm">
       No active games right now.
     </div>
 
-    <div v-else class="space-y-2">
+    <TransitionGroup
+      v-else
+      name="game-list"
+      tag="div"
+      class="space-y-2"
+    >
       <button
         v-for="game in games"
         :key="game.gameId"
@@ -78,30 +83,52 @@ onBeforeUnmount(() => {
       >
         <div class="min-w-0">
           <div class="mb-1 flex items-center gap-2">
-            <AvatarImage
-              :image-url="game.players[0]?.imageUrl"
-              :placeholder="game.players[0]?.username?.[0]?.toUpperCase() || 'X'"
-              :width="24"
-              :height="24"
-            />
-            <AvatarImage
-              :image-url="game.players[1]?.imageUrl"
-              :placeholder="game.players[1]?.username?.[0]?.toUpperCase() || 'O'"
-              :width="24"
-              :height="24"
-            />
-            <span class="truncate text-sm font-medium text-white">
-              {{ game.players[0]?.username || "Player X" }} vs {{ game.players[1]?.username || "Player O" }}
-            </span>
+            <div class="flex items-center gap-1 min-w-0">
+              <AvatarImage
+                :image-url="game.players[0]?.imageUrl"
+                :placeholder="game.players[0]?.username?.[0]?.toUpperCase() || 'X'"
+                :width="24"
+                :height="24"
+              />
+              <span class="truncate text-sm font-medium text-white">
+                {{ game.players[0]?.username || "Player X" }}
+              </span>
+            </div>
+
+            <span class="text-xs text-gray-400 shrink-0">vs</span>
+
+            <div class="flex items-center gap-1 min-w-0">
+              <span class="truncate text-sm font-medium text-white">
+                {{ game.players[1]?.username || "Player O" }}
+              </span>
+              <AvatarImage
+                :image-url="game.players[1]?.imageUrl"
+                :placeholder="game.players[1]?.username?.[0]?.toUpperCase() || 'O'"
+                :width="24"
+                :height="24"
+              />
+            </div>
           </div>
           <p class="truncate text-xs text-gray-400">
-            Turn: {{ game.turn }} • Started at {{ formatStartTime(game.startedAt) }}
+            Started at {{ formatStartTime(game.startedAt) }}
           </p>
         </div>
         <span class="shrink-0 text-xs font-medium uppercase tracking-wide text-violet-200">
           Watch
         </span>
       </button>
-    </div>
+    </TransitionGroup>
   </div>
 </template>
+
+<style scoped>
+.game-list-enter-active,
+.game-list-leave-active {
+  transition: all 0.5s ease;
+}
+.game-list-enter-from,
+.game-list-leave-to {
+  opacity: 0;
+  transform: translateX(30px);
+}
+</style>

@@ -46,9 +46,45 @@ onMounted(() => {
 <template>
   <div class="w-full space-y-4">
     <div class="max-h-80 overflow-auto">
-      <table class="w-full min-w-[24rem] border-collapse text-left sm:min-w-0">
+      <div class="sm:hidden space-y-3">
+        <div
+          v-for="player in players"
+          :key="player.userId"
+          class="flex items-center justify-between p-3 rounded-xl bg-gray-800/40"
+        >
+          <div class="flex items-center gap-3 min-w-0">
+            <span
+              class="flex items-center justify-center w-8 h-8 rounded-full font-bold text-sm shrink-0"
+              :class="[
+                player.rank === 1 ? 'bg-yellow-300 text-black'
+                : player.rank === 2 ? 'bg-gray-500 text-black'
+                  : player.rank === 3 ? 'bg-orange-400 text-black'
+                    : 'bg-gray-600 text-white',
+              ]"
+            >
+              {{ player.rank }}
+            </span>
+
+            <div class="flex items-center gap-2 min-w-0">
+              <AvatarImage
+                :image-url="player.imageUrl"
+                :placeholder="player.username.charAt(0).toUpperCase()"
+                class="w-8 h-8 rounded-full bg-gray-800 border border-gray-700"
+              />
+              <span class="truncate font-semibold">
+                {{ player.username }}
+              </span>
+            </div>
+          </div>
+
+          <div class="text-sm font-mono font-bold text-violet-400">
+            {{ player.rating }}
+          </div>
+        </div>
+      </div>
+      <table class="hidden sm:table w-full min-w-[24rem] border-collapse text-left">
         <thead class="sticky top-0 z-10">
-          <tr class="border-b border-gray-800 text-gray-400 text-sm uppercase tracking-wider">
+          <tr class="border-b border-gray-800 text-sm uppercase tracking-wider">
             <th class="py-2 px-2 font-medium w-16">
               Rank
             </th>
@@ -87,7 +123,7 @@ onMounted(() => {
                 </span>
               </div>
             </td>
-            <td class="py-2 px-2 text-right font-mono font-bold text-violet-400">
+            <td class="py-2 px-2 text-right font-mono font-bold text-violet-700 whitespace-nowrap">
               {{ player.rating }}
             </td>
           </tr>
@@ -99,7 +135,7 @@ onMounted(() => {
       <button
         v-if="!allLoaded"
         :disabled="isLoading"
-        class="text-sm font-medium text-violet-400 hover:text-violet-300 disabled:opacity-50 flex items-center gap-2 transition-all"
+        class="text-sm font-medium text-violet-700 hover:text-violet-300 disabled:opacity-50 flex items-center gap-2 transition-all"
         @click="loadPlayers"
       >
         <LoadingSpinner v-if="isLoading" size="sm" />
