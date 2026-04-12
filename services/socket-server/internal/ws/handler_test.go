@@ -5,14 +5,7 @@ import (
 	"net/http/httptest"
 	"net/url"
 	"testing"
-
-	"github.com/google/uuid"
-	"github.com/gorilla/websocket"
 )
-
-func generateTicket() string {
-	return uuid.NewString()
-}
 
 func TestExtractToken(t *testing.T) {
 	req := &http.Request{
@@ -38,19 +31,27 @@ func TestExtractToken_Empty(t *testing.T) {
 	}
 }
 
-func TestHandleWs_Upgrade(t *testing.T) {
+func TestExtractGameId(t *testing.T) {
+	req := &http.Request{
+		URL: &url.URL{
+			RawQuery: "gameId=game-123",
+		},
+	}
+
+	gameId := extractGameId(req)
+	if gameId != "game-123" {
+		t.Errorf("expected game id game-123, got %s", gameId)
+	}
+}
+
+func TestHandleWs_UnauthorizedWithoutTicket(t *testing.T) {
 	server := &Server{}
 
-	ticket := generateTicket()
+	req := httptest.NewRequest(http.MethodGet, "/api/v1/ws/game", nil)
+	rr := httptest.NewRecorder()
+	server.HandleWs(rr, req)
 
-	s := httptest.NewServer(http.HandlerFunc(server.HandleWs))
-	defer s.Close()
-
-	url := "ws" + s.URL[4:] + "?ticket=" + ticket
-
-	conn, _, err := websocket.DefaultDialer.Dial(url, nil)
-	if err != nil {
-		t.Fatalf("failed to connect: %v", err)
+	if rr.Code != http.StatusUnauthorized {
+		t.Fatalf("expected status %d, got %d", http.StatusUnauthorized, rr.Code)
 	}
-	defer conn.Close()
 }

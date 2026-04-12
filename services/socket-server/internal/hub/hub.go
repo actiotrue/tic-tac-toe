@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"log"
+	"sort"
 	"time"
 
 	"github.com/Jud1k/tic-tac-toe/internal/client"
@@ -14,6 +15,15 @@ import (
 	"github.com/redis/go-redis/v9"
 )
 
+type OngoingEvent struct {
+	Name string
+	Data []byte
+}
+
+type OngoingGamesSubscriber struct {
+	Events chan OngoingEvent
+}
+
 type Hub struct {
 	ClientsByUserId map[string]*client.Client
 	Register        chan *client.Client
@@ -22,6 +32,11 @@ type Hub struct {
 	WaitingQueue    []*client.Client
 	GameByUserId    map[string]*matchmaking.Game
 	GamesById       map[string]*matchmaking.Game
+
+	OngoingSubscribers     map[*OngoingGamesSubscriber]struct{}
+	RegisterOngoing        chan *OngoingGamesSubscriber
+	UnregisterOngoing      chan *OngoingGamesSubscriber
+	OngoingSnapshotRequest chan chan []dto.OngoingGame
 
 	TicketRepository *storage.TicketRepository
 	gameStoreClient  *integration.GameStoreClient
@@ -38,6 +53,11 @@ func NewHub(gameStoreClient *integration.GameStoreClient, redisClient *redis.Cli
 		GameByUserId:    make(map[string]*matchmaking.Game),
 		GamesById:       make(map[string]*matchmaking.Game),
 
+		OngoingSubscribers:     make(map[*OngoingGamesSubscriber]struct{}),
+		RegisterOngoing:        make(chan *OngoingGamesSubscriber),
+		UnregisterOngoing:      make(chan *OngoingGamesSubscriber),
+		OngoingSnapshotRequest: make(chan chan []dto.OngoingGame),
+
 		gameStoreClient:  gameStoreClient,
 		gameRepository:   storage.NewGameRepository(redisClient),
 		TicketRepository: storage.NewTicketRepository(redisClient),
@@ -46,6 +66,7 @@ func NewHub(gameStoreClient *integration.GameStoreClient, redisClient *redis.Cli
 
 func (h *Hub) FromDAO(dao dto.GameDAO) *matchmaking.Game {
 	var players [2]*matchmaking.Player
+	rematchState := make(map[string]bool)
 
 	for i := 0; i < len(dao.Players) && i < 2; i++ {
 		p := dao.Players[i]
@@ -56,16 +77,19 @@ func (h *Hub) FromDAO(dao dto.GameDAO) *matchmaking.Game {
 			ImageUrl: p.ImageUrl,
 			Client:   h.ClientsByUserId[p.Id],
 		}
+		rematchState[p.Id] = false
 	}
 	game := &matchmaking.Game{
 		Id:            dao.Id,
 		Players:       players,
+		Spectators:    make(map[*client.Client]struct{}),
 		Board:         dao.Board,
 		Turn:          dao.Turn,
 		Status:        dao.Status,
 		Winner:        dao.Winner,
 		StartGameTime: dao.StartTime,
 		TurnEndTime:   dao.TurnEndTime,
+		RematchState:  rematchState,
 	}
 	return game
 }
@@ -81,8 +105,12 @@ func (h *Hub) checkGameTimeouts() {
 }
 
 func (h *Hub) handleTimeout(game *matchmaking.Game) {
+	if game.Status != "playing" {
+		return
+	}
 	winner := game.OpponentOf(game.Turn)
 	game.ApplyFinish(winner, nil)
+	h.notifyGameFinished(game.Id)
 }
 
 func (h *Hub) handleMessage(message client.Message) {
@@ -120,17 +148,24 @@ func (h *Hub) handleMessage(message client.Message) {
 			log.Println("Error unmarshalling message: ", err)
 			return
 		}
+
+		statusBeforeMove := game.Status
 		game.HandleMove(uid, request.Payload.Index)
 		gameDao := game.ToDAO()
 
-		//TODO: Need to save game state in background, but without races when last turn
 		ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
 		defer cancel()
 		if err := h.gameRepository.SaveGameState(ctx, gameDao); err != nil {
 			log.Println("Error saving game state: ", err)
 		}
+
 		log.Println("Game status:", game.Status)
-		game.BroadcastState()
+		if game.Status == "playing" {
+			game.BroadcastState()
+		}
+		if statusBeforeMove != "finished" && game.Status == "finished" {
+			h.notifyGameFinished(game.Id)
+		}
 	case "leaveQueue":
 		h.removeFromWaitingQueue(message.Client)
 		log.Printf("User %s left from waiting queue", message.Client.UserId)
@@ -172,6 +207,7 @@ func (h *Hub) finishGame(game *matchmaking.Game) {
 	log.Println("Game finished: ", game.Id)
 
 	copyGame := *game
+	wasPlaying := copyGame.Status == "playing"
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
 	defer cancel()
@@ -188,7 +224,25 @@ func (h *Hub) finishGame(game *matchmaking.Game) {
 			log.Println("Error saving game state: ", err)
 		}
 	}()
+
+	h.notifySpectatorsGameClosed(game, "gameClosed")
 	h.deleteGameFromHub(game)
+
+	if wasPlaying {
+		h.notifyGameFinished(game.Id)
+	}
+}
+
+func (h *Hub) notifySpectatorsGameClosed(game *matchmaking.Game, reason string) {
+	for spectator := range game.Spectators {
+		spectator.SendJSON(dto.GameClosed{
+			Type: "gameClosed",
+			Payload: dto.GameClosedPayload{
+				Reason: reason,
+			},
+		})
+		spectator.Conn.Close()
+	}
 }
 
 func (h *Hub) deleteGameFromHub(game *matchmaking.Game) {
@@ -219,11 +273,101 @@ func (h *Hub) tryRestore(client *client.Client) error {
 		for _, player := range game.Players {
 			h.GameByUserId[player.Id] = game
 		}
+		if game.Status == "playing" {
+			h.notifyGameCreated(game)
+		}
 	}
 
 	game.UpdatePlayerClient(client)
 	game.BroadcastState()
 	return nil
+}
+
+func (h *Hub) registerSpectatorConnection(c *client.Client) {
+	if c == nil {
+		return
+	}
+	if c.TargetGameId == "" {
+		c.SendJSON(dto.GameClosed{
+			Type: "gameClosed",
+			Payload: dto.GameClosedPayload{
+				Reason: "invalidGameId",
+			},
+		})
+		c.Conn.Close()
+		return
+	}
+
+	game := h.GamesById[c.TargetGameId]
+	if game == nil || game.Status != "playing" {
+		c.SendJSON(dto.GameClosed{
+			Type: "gameClosed",
+			Payload: dto.GameClosedPayload{
+				Reason: "gameUnavailable",
+			},
+		})
+		c.Conn.Close()
+		return
+	}
+
+	game.AddSpectator(c)
+	game.SendStateToSpectator(c)
+}
+
+func (h *Hub) unregisterSpectatorConnection(c *client.Client) {
+	if c == nil || c.TargetGameId == "" {
+		return
+	}
+	game := h.GamesById[c.TargetGameId]
+	if game == nil {
+		return
+	}
+	game.RemoveSpectator(c)
+}
+
+func (h *Hub) buildOngoingGamesSnapshot() []dto.OngoingGame {
+	games := make([]dto.OngoingGame, 0, len(h.GamesById))
+	for _, game := range h.GamesById {
+		if game.Status != "playing" {
+			continue
+		}
+		games = append(games, game.ToOngoingGame())
+	}
+	sort.Slice(games, func(i, j int) bool {
+		return games[i].StartedAt.After(games[j].StartedAt)
+	})
+	return games
+}
+
+func (h *Hub) broadcastOngoingEvent(eventName string, payload any) {
+	data, err := json.Marshal(payload)
+	if err != nil {
+		log.Printf("Error marshaling ongoing event %s: %v", eventName, err)
+		return
+	}
+
+	event := OngoingEvent{Name: eventName, Data: data}
+	for subscriber := range h.OngoingSubscribers {
+		select {
+		case subscriber.Events <- event:
+		default:
+			log.Printf("Dropping ongoing event %s for slow subscriber", eventName)
+		}
+	}
+}
+
+func (h *Hub) notifyGameCreated(game *matchmaking.Game) {
+	if game == nil || game.Status != "playing" {
+		return
+	}
+	h.broadcastOngoingEvent("gameCreated", dto.OngoingGameCreated{Game: game.ToOngoingGame()})
+}
+
+func (h *Hub) notifyGameFinished(gameId string) {
+	if gameId == "" {
+		return
+	}
+	h.broadcastOngoingEvent("gameFinished", dto.OngoingGameFinished{GameId: gameId})
 }
 
 func (h *Hub) Run() {
@@ -234,10 +378,14 @@ func (h *Hub) Run() {
 		select {
 		case <-ticker.C:
 			h.checkGameTimeouts()
-		case client := <-h.Register:
-			if old := h.ClientsByUserId[client.UserId]; old != nil && old != client {
-				if old.Conn != client.Conn {
-					log.Printf("Replacing existing connection for user %s", client.UserId)
+		case c := <-h.Register:
+			if c.Role == client.RoleSpectator {
+				h.registerSpectatorConnection(c)
+				continue
+			}
+			if old := h.ClientsByUserId[c.UserId]; old != nil && old != c {
+				if old.Conn != c.Conn {
+					log.Printf("Replacing existing connection for user %s", c.UserId)
 					h.removeFromWaitingQueue(old)
 					if game := h.GameByUserId[old.UserId]; game != nil {
 						game.Detach(old.UserId)
@@ -245,24 +393,39 @@ func (h *Hub) Run() {
 					old.Conn.Close()
 				}
 			}
-			h.ClientsByUserId[client.UserId] = client
-		case client := <-h.Unregister:
-			if current, ok := h.ClientsByUserId[client.UserId]; ok && current == client {
-				delete(h.ClientsByUserId, client.UserId)
+			h.ClientsByUserId[c.UserId] = c
+		case c := <-h.Unregister:
+			if c.Role == client.RoleSpectator {
+				h.unregisterSpectatorConnection(c)
+				close(c.Send)
+				continue
 			}
-			h.removeFromWaitingQueue(client)
-			if game := h.GameByUserId[client.UserId]; game != nil && game.Status == "finished" {
-				game.RematchState[client.UserId] = false
-				game.BroadcastGameClosed("playerLeft", client.UserId)
+
+			if current, ok := h.ClientsByUserId[c.UserId]; ok && current == c {
+				delete(h.ClientsByUserId, c.UserId)
+			}
+			h.removeFromWaitingQueue(c)
+			if game := h.GameByUserId[c.UserId]; game != nil && game.Status == "finished" {
+				game.RematchState[c.UserId] = false
+				game.BroadcastGameClosed("playerLeft", c.UserId)
 				h.finishGame(game)
 			}
-			if game := h.GameByUserId[client.UserId]; game != nil {
-				game.Detach(client.UserId)
+			if game := h.GameByUserId[c.UserId]; game != nil {
+				game.Detach(c.UserId)
 			}
-			close(client.Send)
+			close(c.Send)
 		case msg := <-h.Incoming:
 			log.Println(string(msg.Data))
 			h.handleMessage(msg)
+		case subscriber := <-h.RegisterOngoing:
+			h.OngoingSubscribers[subscriber] = struct{}{}
+		case subscriber := <-h.UnregisterOngoing:
+			if _, ok := h.OngoingSubscribers[subscriber]; ok {
+				delete(h.OngoingSubscribers, subscriber)
+				close(subscriber.Events)
+			}
+		case response := <-h.OngoingSnapshotRequest:
+			response <- h.buildOngoingGamesSnapshot()
 		}
 	}
 }
@@ -330,6 +493,11 @@ func (h *Hub) addToWaitingQueue(client *client.Client) {
 
 func (h *Hub) startNewGame(client1, client2 *client.Client) {
 	players := h.prepareMatchData(client1, client2)
+	if len(players) < 2 {
+		log.Println("Not enough players to start a game")
+		return
+	}
+
 	game := matchmaking.NewGame(players)
 	log.Println("Game created: ", game.Id)
 
@@ -337,6 +505,7 @@ func (h *Hub) startNewGame(client1, client2 *client.Client) {
 	for _, player := range game.Players {
 		h.GameByUserId[player.Id] = game
 	}
+	h.notifyGameCreated(game)
 
 	go func() {
 		ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)

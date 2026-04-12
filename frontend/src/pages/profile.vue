@@ -14,7 +14,7 @@ import EditableUsername from "@/components/profile/EditableUsername.vue";
 import ProfileAvatar from "@/components/profile/ProfileAvatar.vue";
 import RecentGames from "@/components/profile/RecentGames.vue";
 import StatisticChart from "@/components/profile/StatisticChart.vue";
-import { CardContainer, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { CardContainer } from "@/components/ui/card";
 import LoadingSpinner from "@/components/ui/LoadingSpinner.vue";
 import AppLayout from "@/layouts/AppLayout.vue";
 import { formatDate, getErrorMessage } from "@/utils";
@@ -127,39 +127,30 @@ async function updateUsername(newUsername: string) {
         </div>
       </CardContainer>
 
-      <div class="grid lg:grid-cols-3 gap-6">
-        <div class="lg:col-span-2 space-y-6">
-          <CardContainer>
-            <CardHeader>
-              <CardTitle class="flex items-center gap-2">
-                <ClipboardDocumentIcon class="w-6 h-6" /> Recent Games
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <RecentGames />
-            </CardContent>
-          </CardContainer>
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div class="lg:col-span-2 md:col-span-3 space-y-6">
+          <div class="max-w-3xl w-full">
+            <div class="flex items-center gap-2 mb-7">
+              <ClipboardDocumentIcon class="w-6 h-6" /> Recent Games
+            </div>
+            <RecentGames />
+          </div>
         </div>
-
-        <div class="space-y-6">
-          <CardContainer>
-            <CardHeader>
-              <CardTitle class="flex items-center gap-2">
-                <SparklesIcon class="w-6 h-6" /> Game Distribution
-              </CardTitle>
-            </CardHeader>
-            <CardContent class="pt-2">
-              <div class="mx-auto flex w-full items-center justify-center">
-                <StatisticChart
-                  v-if="!isLoading && currentPlayer"
-                  :wins="currentPlayer.wins"
-                  :draws="currentPlayer.draws"
-                  :losses="currentPlayer.losses"
-                />
-                <LoadingSpinner v-else-if="isLoading" size="md" />
-              </div>
-            </CardContent>
-          </CardContainer>
+        <div class="space-y-6 order-first lg:order-0">
+          <div class="flex items-center gap-2">
+            <SparklesIcon class="w-6 h-6" /> Game Distribution
+          </div>
+          <div class="">
+            <div class="mx-auto flex w-full items-center justify-center">
+              <StatisticChart
+                v-if="!isLoading && currentPlayer"
+                :wins="currentPlayer.wins"
+                :draws="currentPlayer.draws"
+                :losses="currentPlayer.losses"
+              />
+              <LoadingSpinner v-else-if="isLoading" size="md" />
+            </div>
+          </div>
         </div>
       </div>
     </div>

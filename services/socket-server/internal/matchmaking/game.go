@@ -35,6 +35,7 @@ type Player struct {
 type Game struct {
 	Id            string
 	Players       [2]*Player
+	Spectators    map[*client.Client]struct{}
 	Board         [9]string
 	Turn          string
 	Status        string
@@ -69,6 +70,7 @@ func NewGame(players []PlayerMatchData) *Game {
 				ImageUrl: player2.Info.ImageUrl,
 			},
 		},
+		Spectators:    make(map[*client.Client]struct{}),
 		Board:         [9]string{"", "", "", "", "", "", "", "", ""},
 		Status:        "playing",
 		Turn:          "X",
@@ -167,23 +169,57 @@ func (g *Game) GetPlayersInfo() []dto.PlayerInfo {
 	return players
 }
 
+func (g *Game) ToOngoingGame() dto.OngoingGame {
+	return dto.OngoingGame{
+		GameId:    g.Id,
+		Players:   g.GetPlayersInfo(),
+		Turn:      g.Turn,
+		StartedAt: g.StartGameTime,
+	}
+}
+
+func (g *Game) AddSpectator(c *client.Client) {
+	if c == nil {
+		return
+	}
+	g.Spectators[c] = struct{}{}
+}
+
+func (g *Game) RemoveSpectator(c *client.Client) {
+	if c == nil {
+		return
+	}
+	delete(g.Spectators, c)
+}
+
+func (g *Game) sendState(to *client.Client, players []dto.PlayerInfo, yourSide string) {
+	secondsLeft := max(int(time.Until(g.TurnEndTime).Seconds()), 0)
+	msg := dto.GameState{
+		Type: "gameState",
+		Payload: dto.GameStatePayload{
+			Board:       g.Board[:],
+			Turn:        g.Turn,
+			YourSide:    yourSide,
+			SecondsLeft: secondsLeft,
+			Players:     players,
+		},
+	}
+	to.SendJSON(msg)
+}
+
 func (g *Game) BroadcastState() {
 	players := g.GetPlayersInfo()
 	for _, player := range g.Players {
-		secondsLeft := max(int(time.Until(g.TurnEndTime).Seconds()), 0)
 		side := g.getSideByUserId(player.Id)
-		msg := dto.GameState{
-			Type: "gameState",
-			Payload: dto.GameStatePayload{
-				Board:       g.Board[:],
-				Turn:        g.Turn,
-				YourSide:    side,
-				SecondsLeft: secondsLeft,
-				Players:     players,
-			},
-		}
-		player.Client.SendJSON(msg)
+		g.sendState(player.Client, players, side)
 	}
+	for spectator := range g.Spectators {
+		g.sendState(spectator, players, "")
+	}
+}
+
+func (g *Game) SendStateToSpectator(c *client.Client) {
+	g.sendState(c, g.GetPlayersInfo(), "")
 }
 
 func (g *Game) BroadcastGameOver(winner string, winningLine []int) {
@@ -196,6 +232,9 @@ func (g *Game) BroadcastGameOver(winner string, winningLine []int) {
 	}
 	for _, player := range g.Players {
 		player.Client.SendJSON(msg)
+	}
+	for spectator := range g.Spectators {
+		spectator.SendJSON(msg)
 	}
 }
 

@@ -30,6 +30,25 @@ type GameStatePayload struct {
 	Players     []PlayerInfo `json:"players"`
 }
 
+type OngoingGame struct {
+	GameId    string       `json:"gameId"`
+	Players   []PlayerInfo `json:"players"`
+	Turn      string       `json:"turn"`
+	StartedAt time.Time    `json:"startedAt"`
+}
+
+type OngoingGamesSnapshot struct {
+	Games []OngoingGame `json:"games"`
+}
+
+type OngoingGameCreated struct {
+	Game OngoingGame `json:"game"`
+}
+
+type OngoingGameFinished struct {
+	GameId string `json:"gameId"`
+}
+
 type GameOver struct {
 	Type    string          `json:"type"`
 	Payload GameOverPayload `json:"payload"`

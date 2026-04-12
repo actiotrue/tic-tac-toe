@@ -19,6 +19,7 @@ const { userId } = useAuth();
 
 const loadMoreTrigger = ref<HTMLElement | null>(null);
 let observer: IntersectionObserver | null = null;
+const containerRef = ref<HTMLElement | null>(null);
 
 async function loadGames() {
   if (isLoading.value || allLoaded.value)
@@ -68,6 +69,7 @@ onMounted(() => {
       loadGames();
     }
   }, {
+    root: containerRef.value,
     rootMargin: "100px",
   });
 
@@ -84,74 +86,83 @@ onUnmounted(() => {
 
 <template>
   <div class="w-full">
-    <div class="flex flex-col overflow-hidden rounded-lg shadow-lg">
-      <div class="w-full overflow-x-auto overscroll-x-contain [touch-action:pan-x]">
-        <table class="min-w-[650px] border-separate border-spacing-0 text-left">
-          <thead class="bg-gray-600 text-gray-300 uppercase text-xs font-semibold">
-            <tr>
-              <th class="px-4 py-3">
-                Player X
-              </th>
-              <th class="px-4 py-3">
-                Player O
-              </th>
-              <th class="px-4 py-3">
-                Result
-              </th>
-              <th class="px-4 py-3 text-right">
-                Duration
-              </th>
-            </tr>
-          </thead>
-          <tbody class="divide-y divide-gray-700">
-            <tr v-if="games.length === 0">
-              <td colspan="4" class="px-4 py-10 text-center text-gray-500">
-                Нет недавних игр
-              </td>
-            </tr>
+    <div class="flex flex-col">
+      <div ref="containerRef" class="w-full overflow-x-auto overscroll-x-contain [touch-action:pan-x] max-h-120 overflow-y-auto scroll-smooth">
+        <div class="w-full overflow-x-auto">
+          <table class="w-full min-w-[42rem] border-separate border-spacing-0 text-left">
+            <thead class="hidden md:table-header-group bg-gray-600 text-gray-300 uppercase text-xs font-semibold sticky top-0 z-10">
+              <tr>
+                <th class="px-4 py-3">
+                  Player X
+                </th>
+                <th class="px-4 py-3">
+                  Player O
+                </th>
+                <th class="px-4 py-3">
+                  Result
+                </th>
+                <th class="px-4 py-3 text-right">
+                  Duration
+                </th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-700">
+              <tr v-if="games.length === 0">
+                <td colspan="4" class="px-4 py-10 text-center text-gray-500">
+                  Нет недавних игр
+                </td>
+              </tr>
 
-            <tr
-              v-for="game in gamesWithPlayers"
-              :key="game.id"
-              class="transition-colors duration-200" :class="[getRowClass(game)]"
-            >
-              <td class="px-4 py-3 font-medium text-gray-200">
-                <div class="flex min-w-0 items-center gap-3">
-                  <AvatarImage
-                    :image-url="game.playerX?.player?.imageUrl"
-                    :placeholder="game.playerX?.player?.username?.toUpperCase() || '?'"
-                    class="rounded-full overflow-hidden bg-gray-800 border border-gray-700 shrink-0"
-                  />
-                  <span class="truncate">{{ game.playerX?.player?.username || '—' }}</span>
-                </div>
-              </td>
+              <tr
+                v-for="game in gamesWithPlayers"
+                :key="game.id"
+                class="transition-colors duration-200 block md:table-row p-3 md:p-0"
+                :class="[getRowClass(game)]"
+              >
+                <td class="px-4 py-3 font-medium block md:table-cell">
+                  <div class="text-xs text-gray-300 md:hidden mb-1">
+                    Player X
+                  </div>
+                  <div class="flex items-center gap-3">
+                    <AvatarImage
+                      :image-url="game.playerX?.player?.imageUrl"
+                      :placeholder="game.playerX?.player?.username?.toUpperCase() || '?'"
+                      class="rounded-full overflow-hidden bg-gray-800 border border-gray-700 shrink-0"
+                    />
+                    <span class="truncate text-white">{{ game.playerX?.player?.username || '—' }}</span>
+                  </div>
+                </td>
 
-              <td class="px-4 py-3 font-medium text-gray-200">
-                <div class="flex min-w-0 items-center gap-3">
-                  <AvatarImage
-                    :image-url="game.playerO?.player?.imageUrl"
-                    :placeholder="game.playerO?.player?.username?.toUpperCase() || '?'"
-                    :width="40"
-                    :height="40"
-                    class="w-10 h-10 rounded-full overflow-hidden bg-gray-800 border border-gray-700 shrink-0"
-                  />
-                  <span class="truncate">{{ game.playerO?.player?.username || '—' }}</span>
-                </div>
-              </td>
+                <td class="px-4 py-3 font-medium block md:table-cell">
+                  <div class="text-xs text-gray-300 md:hidden mb-1">
+                    Player O
+                  </div>
+                  <div class="flex items-center gap-3">
+                    <AvatarImage
+                      :image-url="game.playerO?.player?.imageUrl"
+                      :placeholder="game.playerO?.player?.username?.toUpperCase() || '?'"
+                      :width="40"
+                      :height="40"
+                      class="w-10 h-10 rounded-full overflow-hidden bg-gray-800 border border-gray-700 shrink-0"
+                    />
+                    <span class="truncate text-white">{{ game.playerO?.player?.username || '—' }}</span>
+                  </div>
+                </td>
 
-              <td class="px-4 py-3 whitespace-nowrap">
-                <span
-                  class="px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider bg-black/20 text-white"
-                >
-                  {{ getWinnerText(game.result) }}
-                </span>
-              </td>
-              <td class="px-4 py-3 text-right text-white tabular-nums whitespace-nowrap">
-                {{ game.duration }}с
-              </td>
-            </tr>
-          </tbody>
-        </table>
+                <td class="px-4 py-3 whitespace-nowrap">
+                  <span
+                    class="px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider bg-black/20 text-white"
+                  >
+                    {{ getWinnerText(game.result) }}
+                  </span>
+                </td>
+                <td class="px-4 py-3 text-right text-white tabular-nums whitespace-nowrap">
+                  {{ game.duration }}с
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
         <div
           ref="loadMoreTrigger"
           class="flex min-w-[42rem] items-center justify-center py-4 text-sm text-gray-400"

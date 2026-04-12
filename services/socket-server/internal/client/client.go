@@ -13,12 +13,21 @@ type Message struct {
 	Data   []byte
 }
 
+type Role string
+
+const (
+	RolePlayer    Role = "player"
+	RoleSpectator Role = "spectator"
+)
+
 type Client struct {
-	UserId   string
-	Conn     *websocket.Conn
-	Send     chan []byte
-	Incoming chan Message
-	Done     chan *Client
+	UserId       string
+	Role         Role
+	TargetGameId string
+	Conn         *websocket.Conn
+	Send         chan []byte
+	Incoming     chan Message
+	Done         chan *Client
 }
 
 const (
@@ -86,6 +95,9 @@ func (c *Client) ReadPump() {
 		if err != nil {
 			log.Println("Error while reading message: ", err)
 			return
+		}
+		if c.Incoming == nil {
+			continue
 		}
 		c.Incoming <- Message{
 			Client: c,

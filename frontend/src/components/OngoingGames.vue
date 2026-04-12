@@ -1,0 +1,134 @@
+<script lang="ts" setup>
+import { computed, onBeforeUnmount, onMounted } from "vue";
+import { useRouter } from "vue-router";
+import AvatarImage from "@/components/AvatarImage.vue";
+import LoadingSpinner from "@/components/ui/LoadingSpinner.vue";
+import { useOngoingGames } from "@/composables/useOngoingGames";
+
+const router = useRouter();
+
+const {
+  games,
+  isLoading,
+  error,
+  connect,
+  disconnect,
+} = useOngoingGames();
+
+const hasGames = computed<boolean>(() => games.value.length > 0);
+
+function watchGame(gameId: string) {
+  router.push({
+    path: "/game",
+    query: {
+      mode: "spectate",
+      gameId,
+    },
+  });
+}
+
+function formatStartTime(value: string): string {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) {
+    return "just started";
+  }
+  return date.toLocaleTimeString([], {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+}
+
+onMounted(() => {
+  connect();
+});
+
+onBeforeUnmount(() => {
+  disconnect();
+});
+</script>
+
+<template>
+  <div class="space-y-3">
+    <div v-if="isLoading" class="flex items-center justify-center py-4">
+      <LoadingSpinner size="sm" />
+    </div>
+
+    <div v-else-if="error" class="space-y-3 rounded-md border border-red-500/20 bg-red-500/10 p-3">
+      <p class="text-sm text-red-200 text-center">
+        {{ error }}
+      </p>
+      <button
+        class="cursor-pointer bg-violet-400 px-3 py-2 text-sm text-white w-full"
+        @click="connect"
+      >
+        Retry
+      </button>
+    </div>
+
+    <div v-else-if="!hasGames" class="text-sm">
+      No active games right now.
+    </div>
+
+    <TransitionGroup
+      v-else
+      name="game-list"
+      tag="div"
+      class="space-y-2"
+    >
+      <button
+        v-for="game in games"
+        :key="game.gameId"
+        class="flex w-full items-center justify-between gap-3 rounded-md border border-white/10 bg-white/5 px-3 py-2 text-left transition hover:bg-white/10"
+        @click="watchGame(game.gameId)"
+      >
+        <div class="min-w-0">
+          <div class="mb-1 flex items-center gap-2">
+            <div class="flex items-center gap-1 min-w-0">
+              <AvatarImage
+                :image-url="game.players[0]?.imageUrl"
+                :placeholder="game.players[0]?.username?.[0]?.toUpperCase() || 'X'"
+                :width="24"
+                :height="24"
+              />
+              <span class="truncate text-sm font-medium text-white">
+                {{ game.players[0]?.username || "Player X" }}
+              </span>
+            </div>
+
+            <span class="text-xs text-gray-400 shrink-0">vs</span>
+
+            <div class="flex items-center gap-1 min-w-0">
+              <span class="truncate text-sm font-medium text-white">
+                {{ game.players[1]?.username || "Player O" }}
+              </span>
+              <AvatarImage
+                :image-url="game.players[1]?.imageUrl"
+                :placeholder="game.players[1]?.username?.[0]?.toUpperCase() || 'O'"
+                :width="24"
+                :height="24"
+              />
+            </div>
+          </div>
+          <p class="truncate text-xs text-gray-400">
+            Started at {{ formatStartTime(game.startedAt) }}
+          </p>
+        </div>
+        <span class="shrink-0 text-xs font-medium uppercase tracking-wide text-violet-200">
+          Watch
+        </span>
+      </button>
+    </TransitionGroup>
+  </div>
+</template>
+
+<style scoped>
+.game-list-enter-active,
+.game-list-leave-active {
+  transition: all 0.5s ease;
+}
+.game-list-enter-from,
+.game-list-leave-to {
+  opacity: 0;
+  transform: translateX(30px);
+}
+</style>
