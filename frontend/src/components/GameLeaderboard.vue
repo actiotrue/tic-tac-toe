@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import type { RankedPlayer } from "@/types/player";
-
 import { onMounted, ref } from "vue";
 import { getLeaderboard } from "@/api/player";
 import LoadingSpinner from "@/components/ui/LoadingSpinner.vue";
+import { useProfile } from "@/composables/useProfile";
 import AvatarImage from "./AvatarImage.vue";
+
+const { goToProfile } = useProfile();
 
 const limit = 3;
 
@@ -65,11 +67,14 @@ onMounted(() => {
               {{ player.rank }}
             </span>
 
-            <div class="flex items-center gap-2 min-w-0">
+            <div
+              class="flex items-center gap-2 min-w-0"
+              @click="goToProfile(player.userId)"
+            >
               <AvatarImage
                 :image-url="player.imageUrl"
                 :placeholder="player.username.charAt(0).toUpperCase()"
-                class="w-8 h-8 rounded-full bg-gray-800 border border-gray-700"
+                class="cursor-pointer w-8 h-8 rounded-full bg-gray-800 border border-gray-700"
               />
               <span class="truncate font-semibold">
                 {{ player.username }}
@@ -103,7 +108,7 @@ onMounted(() => {
                 class="inline-flex items-center justify-center w-8 h-8 rounded-full font-bold text-sm text-black"
                 :class="[
                   player.rank === 1 ? 'bg-yellow-300'
-                  : player.rank === 2 ? 'bg-gray-400'
+                  : player.rank === 2 ? 'bg-gray-300'
                     : player.rank === 3 ? 'bg-orange-400' : 'bg-gray-600 text-white',
                 ]"
               >
@@ -112,7 +117,7 @@ onMounted(() => {
             </td>
 
             <td class="py-2 px-2">
-              <div class="flex min-w-0 items-center gap-3">
+              <div class="cursor-pointer flex min-w-0 items-center gap-3" @click="goToProfile(player.userId)">
                 <AvatarImage
                   :image-url="player.imageUrl"
                   :placeholder="player.username.charAt(0).toUpperCase()"

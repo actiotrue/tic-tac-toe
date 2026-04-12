@@ -1,23 +1,28 @@
 export default [
   {
     path: "/",
-    name: "Home",
+    name: "home",
     component: () => import("@/pages/home.vue"),
   },
   {
     path: "/game",
-    name: "Game",
+    name: "game",
     component: () => import("@/pages/game.vue"),
     meta: {
       requiresAuth: true,
     },
   },
   {
-    path: "/profile",
-    name: "Profile",
+    path: "/profile/me",
+    name: "profile-me",
     component: () => import("@/pages/profile.vue"),
     meta: {
       requiresAuth: true,
     },
+  },
+  {
+    path: "/profile/:userId",
+    name: "profile-user",
+    component: () => import("@/pages/profile.vue"),
   },
 ];

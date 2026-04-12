@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { GlobeAmericasIcon, PlayIcon, TrophyIcon, UserIcon } from "@heroicons/vue/24/solid";
 import { useRouter } from "vue-router";
-import Leaderboard from "@/components/Leaderboard.vue";
+import GameLeaderboard from "@/components/GameLeaderboard.vue";
 import OngoingGames from "@/components/OngoingGames.vue";
 
 import { useAuthModal } from "@/composables/useAuthModal";
@@ -36,14 +36,14 @@ function startGame(mode: "pvp" | "pve") {
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 mx-auto w-full max-w-2xl">
           <button
-            class="flex w-full items-center justify-center gap-3 rounded-md bg-violet-400 px-4 py-3 text-base text-white sm:px-8 sm:text-lg"
+            class="flex w-full items-center cursor-pointer justify-center gap-3 rounded-md bg-violet-400 px-4 py-3 text-base text-white sm:px-8 sm:text-lg"
             @click="startGame('pvp')"
           >
             <PlayIcon class="w-6 h-6" />
             <span class="text-center">Play against people</span>
           </button>
           <button
-            class="flex w-full items-center justify-center gap-3 rounded-md bg-violet-400 px-4 py-3 text-base text-white sm:px-8 sm:text-lg"
+            class="flex w-full items-center justify-center cursor-pointer gap-3 rounded-md bg-violet-400 px-4 py-3 text-base text-white sm:px-8 sm:text-lg"
             @click="startGame('pve')"
           >
             <PlayIcon class="w-6 h-6" />
@@ -97,9 +97,8 @@ function startGame(mode: "pvp" | "pve") {
               <TrophyIcon class="w-6 h-6 text-yellow-400" />
               <span>Leaderboard</span>
             </div>
-
             <div class="rounded-xl bg-gray-800/40 p-4">
-              <Leaderboard />
+              <GameLeaderboard />
             </div>
           </div>
         </div>

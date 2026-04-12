@@ -92,3 +92,23 @@ async def get_player(player_id: uuid.UUID, player_service: PlayerServiceDep):
             status_code=status.HTTP_404_NOT_FOUND, detail="Player not found"
         )
     return player
+
+@router.get("/{player_id}/rank", response_model=PlayerWithRank)
+async def get_player_wiht_rank(player_id: uuid.UUID, player_service: PlayerServiceDep):
+    player = await player_service.get_player_with_rank(player_id)
+    if not player:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Player not found"
+        )
+    return player
+
+@router.get("/{player_id}/recent-games", response_model=list[GameRead])
+async def get_recent_games_by_player_id(
+    player_id: uuid.UUID,
+    player_service: PlayerServiceDep,
+    limit: int = Query(10, ge=1, le=100),
+    offset: int = Query(0, ge=0),
+):
+    return await player_service.get_games_summary_by_player_id(
+        player_id, limit, offset
+    )

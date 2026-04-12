@@ -13,7 +13,6 @@ const props = defineProps<{
   questions: Question[];
 }>();
 
-// 1. Устанавливаем случайный стартовый индекс
 const currentIndex = ref(Math.floor(Math.random() * props.questions.length));
 const selectedAnswer = ref<number | null>(null);
 const isCorrect = ref<boolean | null>(null);
@@ -76,10 +75,10 @@ function nextQuestion() {
       <Transition name="fade">
         <div v-if="selectedAnswer !== null" class="feedback">
           <p v-if="isCorrect" class="text-success">
-            Верно! 🎉
+            Correct! 🎉
           </p>
           <p v-else class="text-error">
-            Не совсем... Правильный ответ: {{ currentQuestion.options[currentQuestion.correct] }}
+            Right answer is {{ currentQuestion.options[currentQuestion.correct] }}
           </p>
           <small class="text-sm">{{ currentQuestion.fact }}</small>
         </div>

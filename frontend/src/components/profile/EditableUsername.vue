@@ -53,7 +53,7 @@ function onBlur() {
 </script>
 
 <template>
-  <div class="mb-2 flex flex-wrap items-center justify-center gap-3 md:justify-start">
+  <div class="flex flex-wrap items-center justify-center gap-3 md:justify-start">
     <template v-if="!isEditing">
       <h1 class="break-all text-2xl font-bold sm:text-3xl">
         {{ props.username }}
