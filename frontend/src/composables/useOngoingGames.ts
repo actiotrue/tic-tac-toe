@@ -29,6 +29,14 @@ export function useOngoingGames() {
 
   const source = ref<EventSource | null>(null);
 
+  const disconnect = () => {
+    if (!source.value) {
+      return;
+    }
+    source.value.close();
+    source.value = null;
+  };
+
   const connect = async () => {
     disconnect();
     isLoading.value = true;
@@ -36,7 +44,7 @@ export function useOngoingGames() {
 
     try {
       const ticket = await getWsTicket();
-      const streamUrl = `${import.meta.env.VITE_WS_URL}/ongoing-games?ticket=${ticket}`;
+      const streamUrl = `${import.meta.env.VITE_EVENTS_URL}/ws/ongoing-games?ticket=${ticket}`;
       const eventSource = new EventSource(streamUrl);
 
       eventSource.addEventListener("activeGames", (event) => {
@@ -84,14 +92,6 @@ export function useOngoingGames() {
       isLoading.value = false;
       error.value = "Failed to connect to games stream";
     }
-  };
-
-  const disconnect = () => {
-    if (!source.value) {
-      return;
-    }
-    source.value.close();
-    source.value = null;
   };
 
   onUnmounted(() => {
