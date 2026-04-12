@@ -3,19 +3,23 @@ import type { GameDetails } from "@/types/game";
 import { computed, onMounted, onUnmounted, ref } from "vue";
 import { toast } from "vue3-toastify";
 import { getRecentGames } from "@/api/player";
-import { useAuth } from "@/store/auth.store";
+import { useProfile } from "@/composables/useProfile";
 import { getErrorMessage } from "@/utils";
 import AvatarImage from "../AvatarImage.vue";
 import LoadingSpinner from "../ui/LoadingSpinner.vue";
 import { getWinnerText } from "./utils";
+
+const props = defineProps<{
+  userId: string;
+}>();
+
+const { goToProfile } = useProfile();
 
 const games = ref<GameDetails[]>([]);
 const limit = 10;
 const offset = ref<number>(0);
 const isLoading = ref(false);
 const allLoaded = ref(false);
-
-const { userId } = useAuth();
 
 const loadMoreTrigger = ref<HTMLElement | null>(null);
 let observer: IntersectionObserver | null = null;
@@ -27,7 +31,7 @@ async function loadGames() {
 
   isLoading.value = true;
   try {
-    const newGames = await getRecentGames(limit, offset.value);
+    const newGames = await getRecentGames(props.userId, limit, offset.value);
 
     if (newGames.length < limit) {
       allLoaded.value = true;
@@ -53,7 +57,7 @@ const gamesWithPlayers = computed(() => {
 });
 
 function getRowClass(game: GameDetails) {
-  const userSide = game.players.find(p => p.playerId === userId)?.side;
+  const userSide = game.players.find(p => p.playerId === props.userId)?.side;
   if (game.result === "draw") {
     return "bg-yellow-500 border-l-4 border-gray-500";
   }
@@ -89,7 +93,7 @@ onUnmounted(() => {
     <div class="flex flex-col">
       <div ref="containerRef" class="w-full overflow-x-auto overscroll-x-contain [touch-action:pan-x] max-h-120 overflow-y-auto scroll-smooth">
         <div class="w-full overflow-x-auto">
-          <table class="w-full min-w-[42rem] border-separate border-spacing-0 text-left">
+          <table class="w-full min-w-2xl border-separate border-spacing-0 text-left">
             <thead class="hidden md:table-header-group bg-gray-600 text-gray-300 uppercase text-xs font-semibold sticky top-0 z-10">
               <tr>
                 <th class="px-4 py-3">
@@ -123,7 +127,7 @@ onUnmounted(() => {
                   <div class="text-xs text-gray-300 md:hidden mb-1">
                     Player X
                   </div>
-                  <div class="flex items-center gap-3">
+                  <div class="cursor-pointer flex items-center gap-3" @click="goToProfile(game.playerX?.player?.userId)">
                     <AvatarImage
                       :image-url="game.playerX?.player?.imageUrl"
                       :placeholder="game.playerX?.player?.username?.toUpperCase() || '?'"
@@ -137,7 +141,7 @@ onUnmounted(() => {
                   <div class="text-xs text-gray-300 md:hidden mb-1">
                     Player O
                   </div>
-                  <div class="flex items-center gap-3">
+                  <div class="cursor-pointer flex items-center gap-3" @click="goToProfile(game.playerO?.player?.userId)">
                     <AvatarImage
                       :image-url="game.playerO?.player?.imageUrl"
                       :placeholder="game.playerO?.player?.username?.toUpperCase() || '?'"
@@ -165,7 +169,7 @@ onUnmounted(() => {
         </div>
         <div
           ref="loadMoreTrigger"
-          class="flex min-w-[42rem] items-center justify-center py-4 text-sm text-gray-400"
+          class="flex min-w-2xl items-center justify-center py-4 text-sm text-gray-400"
         >
           <LoadingSpinner v-if="isLoading" size="sm" />
         </div>

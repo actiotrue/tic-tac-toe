@@ -1,197 +1,312 @@
 [
   {
     "id": 1,
-    "question": "В каком году произошло Крещение Руси?",
+    "question": "In what year did the Baptism of Rus' take place?",
     "options": ["862", "988", "1147", "1242"],
     "correct": 1,
-    "fact": "Крещение Руси связано с именем князя Владимира Святославича."
+    "fact": "The Baptism of Rus' is associated with the name of Prince Vladimir Sviatoslavich."
   },
   {
     "id": 2,
-    "question": "Кто из царей прорубил «окно в Европу» и основал Санкт-Петербург?",
-    "options": ["Иван Грозный", "Александр I", "Петр I", "Николай II"],
+    "question": "Which Tsar 'cut a window to Europe' and founded St. Petersburg?",
+    "options": ["Ivan the Terrible", "Alexander I", "Peter I", "Nicholas II"],
     "correct": 2,
-    "fact": "Город был основан в 1703 году на землях, отвоеванных у Швеции."
+    "fact": "The city was founded in 1703 on lands reclaimed from Sweden."
   },
   {
     "id": 3,
-    "question": "Какое событие произошло 12 апреля 1961 года?",
+    "question": "What event occurred on April 12, 1961?",
     "options": [
-      "Запуск первого спутника",
-      "Первый полет человека в космос",
-      "Окончание Великой Отечественной войны",
-      "Начало строительства БАМа"
+      "Launch of the first satellite",
+      "First human spaceflight",
+      "End of the Great Patriotic War",
+      "Start of the Baikal-Amur Mainline construction"
     ],
     "correct": 1,
-    "fact": "Юрий Гагарин стал первым человеком, совершившим полет на орбиту."
+    "fact": "Yuri Gagarin became the first human to journey into orbit."
   },
   {
     "id": 4,
-    "question": "Как звали первого царя из династии Романовых?",
+    "question": "What was the name of the first Tsar from the Romanov dynasty?",
     "options": [
-      "Михаил Федорович",
-      "Алексей Михайлович",
-      "Петр Алексеевич",
-      "Николай Павлович"
+      "Mikhail Fyodorovich",
+      "Alexei Mikhailovich",
+      "Peter Alekseevich",
+      "Nikolai Pavlovich"
     ],
     "correct": 0,
-    "fact": "Михаил Романов был избран на царство Земским собором в 1613 году."
+    "fact": "Mikhail Romanov was elected to the throne by the Zemsky Sobor in 1613."
   },
   {
     "id": 5,
-    "question": "При какой императрице Крым впервые вошел в состав Российской империи?",
-    "options": ["Анна Иоанновна", "Елизавета Петровна", "Екатерина II", "Мария Федоровна"],
+    "question": "Under which Empress did Crimea first become part of the Russian Empire?",
+    "options": ["Anna Ioannovna", "Elizaveta Petrovna", "Catherine II", "Maria Fyodorovna"],
     "correct": 2,
-    "fact": "Это произошло в 1783 году после серии побед над Османской империей."
+    "fact": "This happened in 1783 after a series of victories over the Ottoman Empire."
   },
   {
     "id": 6,
-    "question": "Как назывался свод законов Русского государства, принятый в 1649 году и окончательно закрепостивший крестьян?",
-    "options": ["«Русская Правда»", "«Судебник Ивана Грозного»", "«Соборное уложение»", "«Указ о вольных хлебопашцах»"],
+    "question": "What was the name of the Russian state legal code adopted in 1649 that definitively enserfed the peasants?",
+    "options": ["Russkaya Pravda", "Sudebnik of Ivan the Terrible", "Sobornoye Ulozheniye", "Decree on Free Ploughmen"],
     "correct": 2,
-    "fact": "«Соборное уложение» Алексея Михайловича установило бессрочный сыск беглых крестьян, что означало юридическое оформление крепостного права."
+    "fact": "The Sobornoye Ulozheniye of Alexei Mikhailovich established an indefinite search for runaway peasants, which legally formalized serfdom."
   },
   {
     "id": 7,
-    "question": "Кто был фактическим правителем страны в период Смуты (1610–1612), получив прозвище «Тушинский вор»?",
-    "options": ["Иван Болотников", "Лжедмитрий II", "Прокопий Ляпунов", "Василий Шуйский"],
+    "question": "Who was the de facto ruler of the country during the Time of Troubles (1610–1612), earning the nickname 'Tushino Thief'?",
+    "options": ["Ivan Bolotnikov", "False Dmitry II", "Prokopy Lyapunov", "Vasily Shuisky"],
     "correct": 1,
-    "fact": "Лжедмитрий II организовал ставку в селе Тушино под Москвой, одновременно пытаясь захватить власть, пока в Кремле правил Василий Шуйский."
+    "fact": "False Dmitry II set up his camp in the village of Tushino near Moscow, attempting to seize power while Vasily Shuisky ruled in the Kremlin."
   },
   {
     "id": 8,
-    "question": "Какой государственный орган, созданный Петром I в 1711 году, стал высшим органом государственной власти и законодательства, заменив Боярскую думу?",
-    "options": ["Сенат", "Синод", "Коллегия", "Кабинет министров"],
+    "question": "Which state body, created by Peter I in 1711, became the supreme institution of state power and legislation, replacing the Boyar Duma?",
+    "options": ["Senate", "Synod", "Collegium", "Cabinet of Ministers"],
     "correct": 0,
-    "fact": "Правительствующий сенат был создан как временный орган во время частых отлучек царя, но быстро стал постоянным высшим органом власти."
+    "fact": "The Governing Senate was created as a temporary body during the Tsar's frequent absences but quickly became a permanent supreme authority."
   },
   {
     "id": 9,
-    "question": "Какое сословное право было даровано дворянству Манифестом о вольности дворянской в 1762 году и подтверждено Жалованной грамотой Екатерины II?",
+    "question": "What estate right was granted to the nobility by the Manifesto on the Liberty of the Nobility in 1762 and confirmed by Catherine II's Charter to the Nobility?",
     "options": [
-      "Право владеть крепостными душами",
-      "Право на создание дворянских собраний",
-      "Освобождение от обязательной военной и гражданской службы",
-      "Право на винокурение без акциза"
+      "The right to own serf souls",
+      "The right to form noble assemblies",
+      "Exemption from compulsory military and civil service",
+      "The right to distill vodka tax-free"
     ],
     "correct": 2,
-    "fact": "Манифест Петра III (1762) освободил дворян от 25-летней обязательной службы, превратив их из служилого сословия в привилегированное."
+    "fact": "The Manifesto of Peter III (1762) freed the nobility from 25 years of compulsory service, transforming them from a service class into a privileged estate."
   },
   {
     "id": 10,
-    "question": "Кто из российских императоров был убит в результате террористического акта 1 марта 1881 года на набережной Екатерининского канала?",
-    "options": ["Александр II", "Николай I", "Павел I", "Александр III"],
+    "question": "Which Russian Emperor was killed in a terrorist act on March 1, 1881, on the embankment of the Catherine Canal?",
+    "options": ["Alexander II", "Nicholas I", "Paul I", "Alexander III"],
     "correct": 0,
-    "fact": "Александр II, известный как «Освободитель» (отменил крепостное право), погиб от бомбы, брошенной народовольцем Игнатием Гриневицким."
+    "fact": "Alexander II, known as the 'Liberator' (for abolishing serfdom), was killed by a bomb thrown by the Narodnaya Volya member Ignaty Grinevitsky."
   },
   {
     "id": 11,
-    "question": "Как называлась политика большевиков в период Гражданской войны (1918–1921), характеризовавшаяся национализацией промышленности, продразверсткой и запретом частной торговли?",
-    "options": ["НЭП", "Военный коммунизм", "Коллективизация", "Индустриализация"],
+    "question": "What was the name of the Bolshevik policy during the Civil War (1918–1921) characterized by the nationalization of industry, food requisitioning (prodrazverstka), and the prohibition of private trade?",
+    "options": ["NEP", "War Communism", "Collectivization", "Industrialization"],
     "correct": 1,
-    "fact": "«Военный коммунизм» был введен для мобилизации всех ресурсов на фронт; продразверстка вызывала массовые крестьянские восстания (например, Тамбовское), что привело к переходу к НЭПу."
+    "fact": "War Communism was introduced to mobilize all resources for the front; prodrazverstka caused mass peasant uprisings (e.g., Tambov Rebellion), which led to the transition to the NEP."
   },
   {
     "id": 12,
-    "question": "Кто был главнокомандующим русской армией в Отечественную войну 1812 года до назначения Михаила Кутузова?",
-    "options": ["Петр Багратион", "Михаил Барклай-де-Толли", "Алексей Аракчеев", "Николай Раевский"],
+    "question": "Who was the commander-in-chief of the Russian army during the Patriotic War of 1812 before the appointment of Mikhail Kutuzov?",
+    "options": ["Pyotr Bagration", "Mikhail Barclay de Tolly", "Alexei Arakcheev", "Nikolai Raevsky"],
     "correct": 1,
-    "fact": "Барклай-де-Толли командовал 1-й Западной армией и фактически был главнокомандующим, проводя тактику отступления, что вызвало недовольство в обществе и дворцовых кругах."
+    "fact": "Barclay de Tolly commanded the 1st Western Army and was de facto commander-in-chief, conducting a retreat tactic that caused discontent in society and court circles."
   },
   {
     "id": 13,
-    "question": "В каком веке произошло окончательное присоединение Сибири к России, когда был заключен Нерчинский договор с Китаем?",
-    "options": ["XVI век", "XVII век", "XVIII век", "XIX век"],
+    "question": "In which century did the final annexation of Siberia to Russia occur, marked by the signing of the Treaty of Nerchinsk with China?",
+    "options": ["16th century", "17th century", "18th century", "19th century"],
     "correct": 1,
-    "fact": "Нерчинский договор 1689 года (XVII век) стал первым русско-китайским договором, установившим границу в Приамурье, хотя Россия временно лишилась выхода к Охотскому морю."
+    "fact": "The Treaty of Nerchinsk of 1689 (17th century) was the first Russo-Chinese treaty establishing a border in the Amur region, although Russia temporarily lost access to the Sea of Okhotsk."
   },
   {
     "id": 14,
-    "question": "Кто из советских конструкторов возглавлял разработку первой в мире атомной бомбы (проект «РДС-1»)?",
-    "options": ["Сергей Королев", "Игорь Курчатов", "Андрей Туполев", "Юлий Харитон"],
+    "question": "Which Soviet designer led the development of the world's first atomic bomb (the RDS-1 project)?",
+    "options": ["Sergei Korolev", "Igor Kurchatov", "Andrei Tupolev", "Yuli Khariton"],
     "correct": 1,
-    "fact": "Игорь Курчатов был научным руководителем советского атомного проекта с 1942 года; испытание РДС-1 прошло успешно 29 августа 1949 года на Семипалатинском полигоне."
+    "fact": "Igor Kurchatov was the scientific director of the Soviet atomic project from 1942; the RDS-1 test was successfully conducted on August 29, 1949, at the Semipalatinsk Test Site."
   },
   {
     "id": 15,
-    "question": "Какое название получило стояние войск на реке Угре в 1480 году, ознаменовавшее окончательное падение ордынского ига?",
-    "options": ["Ледовое побоище", "Куликовская битва", "Татарский перелом", "Великое стояние"],
+    "question": "What was the name given to the standoff on the Ugra River in 1480, which marked the final end of the Horde's yoke?",
+    "options": ["Battle on the Ice", "Battle of Kulikovo", "Tatar Turning Point", "Great Stand"],
     "correct": 3,
-    "fact": "«Великое стояние на Угре» положило конец монголо-татарскому игу. Войска Ивана III и хана Ахмата не решились на активные боевые действия, и ордынцы ушли, не вступив в бой."
+    "fact": "The 'Great Stand on the Ugra River' ended the Mongol-Tatar yoke. The troops of Ivan III and Khan Akhmat did not engage in active combat, and the Horde forces withdrew without a fight."
   },
   {
     "id": 16,
-    "question": "Кто был фаворитом и фактическим правителем России в последние годы жизни Екатерины II?",
-    "options": ["Григорий Потемкин", "Платон Зубов", "Алексей Орлов", "Григорий Орлов"],
+    "question": "Who was the favorite and de facto ruler of Russia during the last years of Catherine II's life?",
+    "options": ["Grigory Potemkin", "Platon Zubov", "Alexei Orlov", "Grigory Orlov"],
     "correct": 1,
-    "fact": "Платон Зубов стал фаворитом в 1789 году и оставался им до смерти императрицы в 1796 году; он получил огромные властные полномочия, что вызвало недовольство высшей аристократии."
+    "fact": "Platon Zubov became the favorite in 1789 and remained so until the Empress's death in 1796; he received enormous power, which caused discontent among the high aristocracy."
   },
   {
     "id": 17,
-    "question": "Какое событие произошло 4 февраля 1945 года (3–11 февраля) на территории СССР и определило послевоенное устройство мира?",
+    "question": "What event took place on February 4, 1945 (February 3–11), on the territory of the USSR and determined the post-war world order?",
     "options": [
-      "Тегеранская конференция",
-      "Потсдамская конференция",
-      "Ялтинская (Крымская) конференция",
-      "Подписание Акта о безоговорочной капитуляции Германии"
+      "Tehran Conference",
+      "Potsdam Conference",
+      "Yalta (Crimean) Conference",
+      "Signing of the Act of Unconditional Surrender of Germany"
     ],
     "correct": 2,
-    "fact": "Ялтинская конференция в Ливадийском дворце определила раздел Германии на зоны оккупации, вступление СССР в войну с Японией и создание ООН."
+    "fact": "The Yalta Conference at the Livadia Palace determined the division of Germany into occupation zones, the USSR's entry into the war against Japan, and the creation of the UN."
   },
   {
     "id": 18,
-    "question": "Как называлось первое высшее учебное заведение светского типа в России, открытое в 1687 году по инициативе Симеона Полоцкого?",
-    "options": ["Московский университет", "Славяно-греко-латинская академия", "Смольный институт", "Царскосельский лицей"],
+    "question": "What was the name of the first secular higher educational institution in Russia, opened in 1687 on the initiative of Simeon Polotsky?",
+    "options": ["Moscow University", "Slavic Greek Latin Academy", "Smolny Institute", "Tsarskoye Selo Lyceum"],
     "correct": 1,
-    "fact": "Академия стала кузницей кадров для науки и государственной службы; в ней учились Михаил Ломоносов и многие деятели XVIII века."
+    "fact": "The Academy became a forge of personnel for science and public service; Mikhail Lomonosov and many figures of the 18th century studied there."
   },
   {
     "id": 19,
-    "question": "При каком правителе был проведен денежная реформа, в результате которой в обращение впервые в России поступили бумажные деньги (ассигнации)?",
-    "options": ["Петр I", "Елизавета Петровна", "Екатерина II", "Александр I"],
+    "question": "Under which ruler was the monetary reform carried out, resulting in the introduction of paper money (assignats) into circulation in Russia for the first time?",
+    "options": ["Peter I", "Elizaveta Petrovna", "Catherine II", "Alexander I"],
     "correct": 2,
-    "fact": "Ассигнации были введены в 1769 году Екатериной II для покрытия военных расходов (русско-турецкая война) и финансирования монополий."
+    "fact": "Assignats were introduced in 1769 by Catherine II to cover military expenses (Russo-Turkish War) and finance monopolies."
   },
   {
     "id": 20,
-    "question": "Кто из перечисленных архитекторов не является автором проектов зданий в Санкт-Петербурге?",
-    "options": ["Франческо Бартоломео Растрелли", "Доменико Трезини", "Матвей Казаков", "Карл Росси"],
+    "question": "Which of the following architects is not the author of building projects in St. Petersburg?",
+    "options": ["Francesco Bartolomeo Rastrelli", "Domenico Trezzini", "Matvey Kazakov", "Carlo Rossi"],
     "correct": 2,
-    "fact": "Матвей Казаков — главный архитектор Москвы (здания Сената в Кремле, Петровский путевой дворец, Голицынская больница); Растрелли, Трезини и Росси работали преимущественно в Петербурге."
+    "fact": "Matvey Kazakov was the chief architect of Moscow (Senate building in the Kremlin, Petrovsky Palace, Golitsyn Hospital); Rastrelli, Trezzini, and Rossi worked primarily in St. Petersburg."
   },
   {
     "id": 21,
-    "question": "Какое прозвище получил император Александр III за свою внешнеполитическую линию отказа от войны и поддержание мира в Европе?",
-    "options": ["Освободитель", "Миротворец", "Кровавый", "Тишайший"],
+    "question": "What nickname did Emperor Alexander III receive for his foreign policy line of renouncing war and maintaining peace in Europe?",
+    "options": ["Liberator", "Peacemaker", "Bloody", "Tishaishiy (The Quietest)"],
     "correct": 1,
-    "fact": "Александр III, правивший с 1881 по 1894 год, не участвовал ни в одной войне, за что получил официальное прозвище «Миротворец»."
+    "fact": "Alexander III, who ruled from 1881 to 1894, did not participate in any wars, for which he received the official nickname 'Peacemaker'."
   },
   {
     "id": 22,
-    "question": "Кто был организатором и первым руководителем «Союза борьбы за освобождение рабочего класса» (1895 год) в Санкт-Петербурге?",
-    "options": ["Георгий Плеханов", "Владимир Ленин", "Юлий Мартов", "Лев Троцкий"],
+    "question": "Who was the organizer and first leader of the 'League of Struggle for the Emancipation of the Working Class' (1895) in St. Petersburg?",
+    "options": ["Georgy Plekhanov", "Vladimir Lenin", "Julius Martov", "Leon Trotsky"],
     "correct": 1,
-    "fact": "Владимир Ульянов (Ленин) создал «Союз борьбы» вместе с Мартовым; это была первая попытка объединить марксистские кружки для связи с массовым рабочим движением."
+    "fact": "Vladimir Ulyanov (Lenin) created the 'League of Struggle' together with Martov; this was the first attempt to unite Marxist circles for connection with the mass labor movement."
   },
   {
     "id": 23,
-    "question": "Какое сражение Великой Отечественной войны считается переломным, после которого стратегическая инициатива окончательно перешла к Красной армии?",
-    "options": ["Московская битва", "Сталинградская битва", "Курская дуга", "Снятие блокады Ленинграда"],
+    "question": "Which battle of the Great Patriotic War is considered a turning point, after which the strategic initiative definitively passed to the Red Army?",
+    "options": ["Battle of Moscow", "Battle of Stalingrad", "Battle of Kursk", "Lifting of the Siege of Leningrad"],
     "correct": 2,
-    "fact": "Победа на Курской дуге (июль-август 1943 года) после Сталинградской битвы окончательно закрепила перелом в войне; немецкая армия потеряла способность вести крупные наступательные операции."
+    "fact": "The victory at the Battle of Kursk (July-August 1943) after the Battle of Stalingrad definitively consolidated the turning point in the war; the German army lost the ability to conduct major offensive operations."
   },
   {
     "id": 24,
-    "question": "Как назывался выборный орган местного самоуправления, введенный в ходе Великих реформ Александра II в 1864 году?",
-    "options": ["Земство", "Вече", "Совет", "Магистрат"],
+    "question": "What was the name of the elected body of local self-government introduced during the Great Reforms of Alexander II in 1864?",
+    "options": ["Zemstvo", "Veche", "Soviet", "Magistrate"],
     "correct": 0,
-    "fact": "Земства (губернские и уездные) были введены для заведования хозяйственными делами: строительством дорог, медициной, народным образованием, хотя выборы были куриальными и ограниченными."
+    "fact": "Zemstvos (provincial and district) were introduced to manage economic affairs: road construction, medicine, public education, although the elections were curial and limited."
   },
   {
     "id": 25,
-    "question": "Кто был последним святым патриархом, возглавлявшим Русскую православную церковь до упразднения патриаршества Петром I?",
-    "options": ["Патриарх Иов", "Патриарх Никон", "Патриарх Адриан", "Патриарх Филарет"],
+    "question": "Who was the last holy patriarch to head the Russian Orthodox Church before the abolition of the patriarchate by Peter I?",
+    "options": ["Patriarch Job", "Patriarch Nikon", "Patriarch Adrian", "Patriarch Filaret"],
     "correct": 2,
-    "fact": "Адриан скончался в 1700 году. Петр I запретил выборы нового патриарха, а в 1721 году учредил Святейший Синод (коллегиальный орган) во главе с обер-прокурором."
+    "fact": "Adrian died in 1700. Peter I forbade the election of a new patriarch, and in 1721 established the Most Holy Synod (a collegial body) headed by the Ober-Procurator."
+  },
+  {
+    "id": 26,
+    "question": "What was the name of the first Russian legal code, compiled under Yaroslav the Wise in the 11th century?",
+    "options": ["Sudebnik", "Russkaya Pravda", "Sobornoye Ulozheniye", "Stoglav"],
+    "correct": 1,
+    "fact": "Russkaya Pravda (Russian Justice) is the most important source of law for Old Rus', regulating blood feuds, fines (vira), and social relations."
+  },
+  {
+    "id": 27,
+    "question": "Which operation was the code name for the German invasion of the Soviet Union in 1941?",
+    "options": ["Operation Typhoon", "Operation Citadel", "Operation Barbarossa", "Operation Uranus"],
+    "correct": 2,
+    "fact": "Operation Barbarossa began on June 22, 1941, opening the Eastern Front of World War II. It was named after the Holy Roman Emperor Frederick I Barbarossa."
+  },
+  {
+    "id": 28,
+    "question": "Which Russian poet and writer was fatally wounded in a duel with Georges d'Anthès in 1837?",
+    "options": ["Mikhail Lermontov", "Alexander Pushkin", "Fyodor Tyutchev", "Nikolai Gogol"],
+    "correct": 1,
+    "fact": "Alexander Pushkin, considered the founder of modern Russian literature, died two days after being shot in the stomach during a duel over rumors involving his wife Natalya Goncharova."
+  },
+  {
+    "id": 29,
+    "question": "What was the name of the political policy of openness and transparency introduced by Mikhail Gorbachev in the 1980s?",
+    "options": ["Perestroika", "Glasnost", "Demokratizatsiya", "Uskoreniye"],
+    "correct": 1,
+    "fact": "Glasnost (openness) allowed for public debate and criticism of the Soviet past, significantly weakening the Communist Party's control over information and accelerating the USSR's collapse."
+  },
+  {
+    "id": 30,
+    "question": "The Decembrist Revolt took place on December 14, 1825, in which square of St. Petersburg?",
+    "options": ["Palace Square", "Senate Square", "Red Square", "Isaac's Square"],
+    "correct": 1,
+    "fact": "About 3,000 officers and soldiers refused to swear allegiance to Nicholas I on Senate Square, demanding a constitution. The revolt was crushed by artillery fire."
+  },
+  {
+    "id": 31,
+    "question": "Which city withstood a siege lasting 872 days during the Great Patriotic War?",
+    "options": ["Moscow", "Stalingrad", "Sevastopol", "Leningrad"],
+    "correct": 3,
+    "fact": "The Siege of Leningrad (now St. Petersburg) lasted from September 1941 to January 1944, causing an estimated 1.5 million deaths, mostly from starvation."
+  },
+  {
+    "id": 32,
+    "question": "Who was the leader of the peasant uprising of 1670–1671 that threatened Moscow before being executed by quartering?",
+    "options": ["Ivan Bolotnikov", "Emelyan Pugachev", "Stepan Razin", "Kondraty Bulavin"],
+    "correct": 2,
+    "fact": "Stepan Razin was a Don Cossack who led a major uprising against the bureaucracy and nobility. He was eventually captured and executed in Moscow."
+  },
+  {
+    "id": 33,
+    "question": "What was the name of the famous 'elder' and mystic who had immense influence over the family of the last Tsar, Nicholas II?",
+    "options": ["Sergei Witte", "Grigori Rasputin", "Pyotr Stolypin", "Iliodor"],
+    "correct": 1,
+    "fact": "Grigori Rasputin's ability to alleviate the hemophilia symptoms of Tsarevich Alexei gave him significant political sway, which discredited the monarchy before the 1917 Revolution."
+  },
+  {
+    "id": 34,
+    "question": "Which Soviet cosmonaut conducted the first spacewalk in history on March 18, 1965?",
+    "options": ["Yuri Gagarin", "Alexei Leonov", "German Titov", "Valentina Tereshkova"],
+    "correct": 1,
+    "fact": "Alexei Leonov spent 12 minutes outside the Voskhod 2 spacecraft. His spacesuit ballooned in the vacuum of space, making it nearly impossible for him to re-enter the airlock."
+  },
+  {
+    "id": 35,
+    "question": "What was the primary cause of the Russo-Japanese War of 1904–1905?",
+    "options": [
+      "Religious differences",
+      "Control over Alaska",
+      "Imperial rivalry over Manchuria and Korea",
+      "Dispute over Sakhalin Island fishing rights"
+    ],
+    "correct": 2,
+    "fact": "The war was fought over rival imperial ambitions in Manchuria and Korea. Russia's defeat, including the loss of the Baltic Fleet at Tsushima, triggered the 1905 Revolution."
+  },
+  {
+    "id": 36,
+    "question": "The construction of which massive industrial complex during Stalin's first Five-Year Plan became a symbol of socialist industrialization?",
+    "options": ["Norilsk Nickel", "Magnitogorsk Iron and Steel Works", "Baku Oil Fields", "Dnieper Hydroelectric Station"],
+    "correct": 1,
+    "fact": "Magnitogorsk was built from scratch near a rich iron ore mountain. By 1941, it was producing a significant portion of Soviet steel, vital for tank production during the war."
+  },
+  {
+    "id": 37,
+    "question": "Who wrote the 'History of the Russian State', a monumental 12-volume work completed in the early 19th century?",
+    "options": ["Vasily Tatishchev", "Nikolai Karamzin", "Sergei Solovyov", "Vasily Klyuchevsky"],
+    "correct": 1,
+    "fact": "Nikolai Karamzin's work, though criticized for its literary style and monarchist bias, sparked immense public interest in Russian national history."
+  },
+  {
+    "id": 38,
+    "question": "Which battle in 1709 marked the decisive Russian victory over Sweden in the Great Northern War, effectively ending Sweden's status as a great power?",
+    "options": ["Battle of Narva", "Battle of Gangut", "Battle of Poltava", "Battle of Lesnaya"],
+    "correct": 2,
+    "fact": "The Battle of Poltava saw Peter I's army crush the forces of Charles XII. Charles XII fled to the Ottoman Empire, and the victory allowed Russia to secure its Baltic coastline."
+  },
+  {
+    "id": 39,
+    "question": "What was the name of the first Russian submarine-launched ballistic missile that caused a major diplomatic crisis in 1962?",
+    "options": ["Sputnik", "Tsar Bomba", "R-7 Semyorka", "R-13 (NATO: SS-N-4 Sark)"],
+    "correct": 3,
+    "fact": "The deployment of Soviet missiles (and submarines capable of launching them) to Cuba triggered the Cuban Missile Crisis, the closest the Cold War came to escalating into nuclear war."
+  },
+  {
+    "id": 40,
+    "question": "Which agreement, signed in 1939, contained secret protocols dividing Eastern Europe into German and Soviet spheres of influence?",
+    "options": [
+      "Treaty of Brest-Litovsk",
+      "Molotov–Ribbentrop Pact",
+      "Anti-Comintern Pact",
+      "Munich Agreement"
+    ],
+    "correct": 1,
+    "fact": "The Non-Aggression Pact between Nazi Germany and the USSR included secret clauses allocating the Baltic states, Poland, and Bessarabia to the Soviet sphere, leading to the joint invasion of Poland."
   }
 ]
