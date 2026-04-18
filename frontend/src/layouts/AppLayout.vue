@@ -151,10 +151,10 @@ async function logout() {
       <div class="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
         <div class="flex flex-col items-center justify-center space-y-4 px-4 py-6 text-center">
           <p class="text-sm">
-            Created with ❤️ by Jud1k
+            Created with ❤️ by Actiotrue
           </p>
           <a
-            href="https://github.com/Jud1k/tic-tac-toe"
+            href="https://github.com/actiotrue/tic-tac-toe"
             target="_blank"
             rel="noopener noreferrer"
             class="transition-colors hover:text-gray-300"
