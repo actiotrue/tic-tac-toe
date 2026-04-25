@@ -1,6 +1,6 @@
 # 🎮 Tic-Tac-Toe Online
 A multiplayer Tic-Tac-Toe game.
-<img width="1901" height="884" alt="image" src="https://github.com/user-attachments/assets/d2f0d487-e2fa-4a07-bac9-59be1f6f0683" />
+<img width="1542" height="862" alt="image" src="https://github.com/user-attachments/assets/0a6bdfcb-3927-48b0-ab5f-21c55b411943" />
 
 ## 🏗 System Architecture
     Backend (FastAPI): Handles REST API for authentication, user profiles, leaderboards and game history.
