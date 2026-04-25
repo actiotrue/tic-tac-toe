@@ -13,6 +13,10 @@ A multiplayer Tic-Tac-Toe game.
     Frontend: Vue 3, TypeScript, Vite, Pinia.
     Data: PostgreSQL (Primary DB), Redis (Caching & Queue).
 
+## Some information about project
+* ✅ **This is pet project, not the best website for playing tic tac toe**
+* ✅ If website not avaliable now, that because i run out of money to continue pay for VPS.
+ 
 ## 📝 Getting Started
 1. Clone the repository:
 ```bash
