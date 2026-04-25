@@ -1,5 +1,5 @@
 # 🎮 Tic-Tac-Toe Online
-A multiplayer Tic-Tac-Toe game built with a microservices architecture.
+A multiplayer Tic-Tac-Toe game.
 
 ## 🏗 System Architecture
     Backend (FastAPI): Handles REST API for authentication, user profiles, leaderboards and game history.
@@ -24,23 +24,33 @@ uv venv
 ```
 3. Create a `.env` file in the root directory and add variables by following the `.env.example` file.
 
-4. Run the FastAPI backend:
+4. Apply migrations (need install dbmate):
+```bash
+dbmate up
+```
+
+5. Run the FastAPI backend:
 ```bash
 cd services/api-service
 ./scripts/dev.sh
 ```
 
-5. Run the Socket Server:
+6. Run the Socket Server:
 ```bash
 cd services/socket-server
 air
 ```
 
-6. Run the frontend:
+7. Run the frontend:
 ```bash
 cd frontend
 bun install
 bun dev
+```
+
+or use Docker:
+```bash
+docker compose up
 ```
 
 ## 📝 License
