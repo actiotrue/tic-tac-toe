@@ -10,8 +10,8 @@ A multiplayer Tic-Tac-Toe game.
 ## 🚀 Tech Stack
     Backend: Python 3.14, FastAPI, asyncpg.
     Real-time: Go 1.26, Gorilla WebSocket.
-    Frontend: Vue 3, TypeScript, Vite, Pinia.
-    Data: PostgreSQL (Primary DB), Redis (Caching & Queue).
+    Frontend: Vue 3, TypeScript, Vite, Tailwind, HeadlessUI Vue, Pinia.
+    Data: PostgreSQL (Primary DB), Redis (Caching).
 
 ## Some information about project
 * ✅ **This is pet project, not the best website for playing tic tac toe**
