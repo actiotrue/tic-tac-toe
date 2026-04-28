@@ -28,7 +28,6 @@ function closeModal() {
     query: {
       ...route.query,
       modal: undefined,
-      method: undefined,
     },
   });
 }
