@@ -29,7 +29,7 @@ uv venv
 ```
 3. Create a `.env` file in the root directory and add variables by following the `.env.example` file.
 
-4. Apply migrations (need install dbmate):
+4. Apply migrations (need install [dbmate](https://github.com/amacneil/dbmate):
 ```bash
 dbmate up
 ```
