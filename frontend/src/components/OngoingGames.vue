@@ -90,7 +90,7 @@ onBeforeUnmount(() => {
                 :width="24"
                 :height="24"
               />
-              <span class="truncate text-sm font-medium text-white">
+              <span class="truncate text-sm font-medium">
                 {{ game.players[0]?.username || "Player X" }}
               </span>
             </div>
@@ -98,7 +98,7 @@ onBeforeUnmount(() => {
             <span class="text-xs text-gray-400 shrink-0">vs</span>
 
             <div class="flex items-center gap-1 min-w-0">
-              <span class="truncate text-sm font-medium text-white">
+              <span class="truncate text-sm font-medium">
                 {{ game.players[1]?.username || "Player O" }}
               </span>
               <AvatarImage

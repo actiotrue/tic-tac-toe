@@ -11,7 +11,9 @@
   --text-primary: #000000;
   --border-color: #d1d7e3;
   --border-color-transparent: #555c6950;
-  --card-bg: var(--color-gray-300);
+  --card-bg: var(--color-gray-400);
+  --quiz-bg: var(--color-gray-200);
+  --quiz-button-bg: var(--color-gray-100);
 }
 
 :root[data-theme="light"] {
@@ -20,6 +22,8 @@
   --border-color: #020b1a;
   --border-color-transparent: #86909f50;
   --card-bg: var(--color-gray-800);
+  --quiz-bg: #2a2a2a;
+  --quiz-button-bg: #2a2a2a;
 }
 
 body {
@@ -66,4 +70,12 @@ canvas {
 
 .bg-card {
   background-color: color-mix(in srgb, var(--card-bg), transparent 60%);
+}
+
+.bg-quiz {
+  background-color: var(--quiz-bg);
+}
+
+.bg-quiz-button {
+  background-color: var(--quiz-button-bg);
 }

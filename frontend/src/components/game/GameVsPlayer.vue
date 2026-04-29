@@ -107,13 +107,13 @@ onBeforeUnmount(() => {
       <span class="text-gray-400">Connecting to the server...</span>
     </div>
     <div v-else-if="gameStatus === GameStatus.Searching" class="w-full max-w-md space-y-6">
-      <div class="flex flex-col items-center p-6 timer-background rounded-2xl backdrop-blur-sm">
+      <div class="flex flex-col items-center p-6 bg-quiz rounded-2xl backdrop-blur-sm">
         <SearchingTimer />
         <p class="mt-2 text-sm text-gray-400">
           Finding a opponent...
         </p>
       </div>
-      <Quiz :questions="quizData" />
+      <Quiz class="bg-quiz" :questions="quizData" />
     </div>
     <div v-else-if="gameStatus === GameStatus.Playing || gameStatus === GameStatus.Finished" class="w-full">
       <div class="mb-4">
@@ -124,7 +124,7 @@ onBeforeUnmount(() => {
       </div>
       <GameBoard
         :board="game.board.value"
-        :current-player="game.currentPlayerSymbol.value"
+        :current-player="game.currentPlayerSymbol.value || 'X'"
         :winner="game.winner.value"
         :winning-line="game.winningLine.value ?? []"
         :disabled="gameStatus === GameStatus.Finished || game.currentPlayerSymbol.value !== playerSide"
