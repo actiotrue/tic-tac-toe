@@ -118,7 +118,7 @@ onMounted(() => {
 
       <div class="mt-6 flex justify-center">
         <button
-          class="cursor-pointer rounded-md bg-violet-400 px-4 py-2 text-sm text-white"
+          class="cursor-pointer rounded-md bg-violet-400 px-4 py-2 text-sm text-white hover:bg-violet-500"
           @click="goHome"
         >
           Back to home

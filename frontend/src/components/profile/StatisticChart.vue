@@ -57,7 +57,7 @@ const chartOptions = {
 </script>
 
 <template>
-  <div class="flex flex-col items-center p-4 rounded-xl bg-gray-800/50 w-full">
+  <div class="flex flex-col items-center p-4 rounded-xl w-full">
     <div v-if="props.wins === 0 && props.draws === 0 && props.losses === 0" class="flex justify-center">
       <ChartPieIcon class="h-24 w-24 text-gray-500" />
     </div>

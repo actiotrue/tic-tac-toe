@@ -6,41 +6,11 @@ import {
   TransitionChild,
   TransitionRoot,
 } from "@headlessui/vue";
-import { computed } from "vue";
-import { useRoute, useRouter } from "vue-router";
+import { useAuthModal } from "@/composables/useAuthModal";
 import LoginForm from "./LoginForm.vue";
 import SignupForm from "./SignupForm.vue";
 
-const route = useRoute();
-const router = useRouter();
-
-const method = computed(() => {
-  const m = route.query.method?.toString();
-  return m === "signup" ? "signup" : "login";
-});
-
-const isOpen = computed(() => {
-  return route.query.modal === "auth";
-});
-
-function closeModal() {
-  router.replace({
-    query: {
-      ...route.query,
-      modal: undefined,
-    },
-  });
-}
-
-function toggleMode() {
-  const newMethod = method.value === "login" ? "signup" : "login";
-  router.replace({
-    query: {
-      ...route.query,
-      method: newMethod,
-    },
-  });
-}
+const { closeModal, toggleMethod, isOpen, method } = useAuthModal();
 
 function handleAuthSuccess() {
   closeModal();
@@ -86,16 +56,15 @@ function handleAuthSuccess() {
               </DialogTitle>
 
               <div class="mt-4">
-                <slot v-if="$slots.default" />
-                <SignupForm v-else-if="method === 'signup'" @success="handleAuthSuccess" />
-                <LoginForm v-else-if="method === 'login'" @success="handleAuthSuccess" />
+                <SignupForm v-if="method === 'signup'" @success="handleAuthSuccess" />
+                <LoginForm v-if="method === 'login'" @success="handleAuthSuccess" />
               </div>
 
               <div class="mt-6 flex justify-between items-center">
                 <button
                   type="button"
                   class="cursor-pointer text-sm hover:underline text-white"
-                  @click="toggleMode"
+                  @click="toggleMethod"
                 >
                   {{ method === 'login' ? 'Need an account?' : 'Already have an account?' }}
                 </button>

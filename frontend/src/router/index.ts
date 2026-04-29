@@ -12,7 +12,7 @@ const router = createRouter({
 router.beforeEach((to) => {
   const authStore = useAuth();
   if (to.meta.requiresAuth && !authStore.isLoggedIn) {
-    return "/?modal=auth&method=login";
+    return "/?modal=auth";
   }
   return true;
 });
