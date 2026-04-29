@@ -383,15 +383,13 @@ func (h *Hub) Run() {
 				h.registerSpectatorConnection(c)
 				continue
 			}
-			if old := h.ClientsByUserId[c.UserId]; old != nil && old != c {
-				if old.Conn != c.Conn {
-					log.Printf("Replacing existing connection for user %s", c.UserId)
-					h.removeFromWaitingQueue(old)
-					if game := h.GameByUserId[old.UserId]; game != nil {
-						game.Detach(old.UserId)
-					}
-					old.Conn.Close()
-				}
+			if old := h.ClientsByUserId[c.UserId]; old != nil && old != c && old.Conn != nil && old.Conn != c.Conn {
+				// Don't drop the existing (active) connection.
+				// This situation typically happens when the client opens a second WS connection
+				// for the same account (e.g. another tab sharing localStorage token).
+				log.Printf("Rejecting new connection for user %s (already connected)", c.UserId)
+				_ = c.Conn.Close()
+				continue
 			}
 			h.ClientsByUserId[c.UserId] = c
 		case c := <-h.Unregister:
