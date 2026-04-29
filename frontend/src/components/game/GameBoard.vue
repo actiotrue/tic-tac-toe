@@ -1,41 +1,50 @@
 <script lang="ts" setup>
 import type { GameBoard, PlayerSymbol, Winner } from "../../types/game";
+import { ArrowPathIcon } from "@heroicons/vue/24/solid";
 import { CardContainer, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 
 const props = defineProps<{
   board: GameBoard;
-  currentPlayer: PlayerSymbol | null;
+  currentPlayer: PlayerSymbol;
   winner: Winner | null;
   winningLine?: number[];
   disabled?: boolean;
   statusMessage: string;
+  secondsLeft?: number;
 }>();
 
 const emit = defineEmits<{
   cellClick: [index: number];
+  reset: [];
 }>();
 </script>
 
 <template>
-  <div class="mx-auto flex w-full max-w-2xl flex-col space-y-4 sm:space-y-6">
+  <div class="flex flex-col max-w-2xl mx-auto space-y-6">
+    <h1 class="font-semibold text-2xl text-center">
+      Game board
+    </h1>
     <CardContainer class="w-full">
       <CardHeader>
-        <CardTitle class="break-words text-center text-xl font-bold sm:text-2xl">
+        <CardTitle class="text-center text-2xl font-bold">
           {{ statusMessage }}
         </CardTitle>
+        <div v-if="props.secondsLeft !== undefined && !props.winner" class="text-center text-sm text-gray-600">
+          Time left: {{ props.secondsLeft }}s
+        </div>
       </CardHeader>
       <CardContent>
-        <div class="mx-auto grid aspect-square w-full max-w-[min(100%,24rem)] grid-cols-3 gap-2 sm:gap-3">
+        <div class="grid grid-cols-3 gap-3 max-w-md mx-auto aspect-square">
           <button
             v-for="(cell, index) in board"
             :key="index"
-            class="flex aspect-square items-center justify-center rounded-lg bg-gray-200 text-3xl font-bold sm:text-5xl"
+            class="aspect-square bg-gray-200 rounded-lg text-5xl font-bold flex items-center justify-center"
             :disabled="!!cell || !!props.winner || disabled"
             :class="[
               cell === 'X' ? 'text-blue-600' : 'text-red-600',
               props.winningLine?.includes(index) ? 'bg-green-400' : 'bg-gray-200',
               {
-                'cursor-pointer hover:opacity-80 active:scale-95 transition-all':
+                'cursor-pointer hover:opacity-80 transition-all':
                   !cell && !props.winner && !disabled,
                 'cursor-not-allowed': disabled && !props.winner,
               },
@@ -50,8 +59,14 @@ const emit = defineEmits<{
           </button>
         </div>
       </CardContent>
-      <CardFooter v-if="$slots.footer">
-        <slot name="footer" />
+      <CardFooter>
+        <button
+          class="flex items-center justify-center cursor-pointer gap-2 text-white bg-violet-400 w-full rounded-md py-3 hover:bg-violet-500 hover:opacity-80 transition-opacity"
+          @click="emit('reset')"
+        >
+          <ArrowPathIcon class="w-6 h-6" />
+          New game
+        </button>
       </CardFooter>
     </CardContainer>
   </div>
