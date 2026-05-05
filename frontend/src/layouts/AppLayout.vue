@@ -142,7 +142,7 @@ async function logout() {
         </div>
       </div>
     </nav>
-    <main class="grow px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
+    <main class="grow px-4 py-4">
       <div class="mx-auto w-full max-w-6xl min-w-0">
         <slot />
       </div>

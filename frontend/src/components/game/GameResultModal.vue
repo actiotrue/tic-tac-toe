@@ -66,7 +66,7 @@ const emit = defineEmits(["close", "rematch", "newGame", "home"]);
               <div class="mt-6 mb-8">
                 <div class="flex flex-col items-center justify-center gap-2 sm:flex-row">
                   <span class="text-slate-400 font-medium">Result:</span>
-                  <p class="break-words text-xl font-bold text-indigo-400">
+                  <p class="wrap-break-word text-xl font-bold text-indigo-400">
                     {{ result }}
                   </p>
                 </div>

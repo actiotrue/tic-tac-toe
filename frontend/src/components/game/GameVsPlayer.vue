@@ -73,7 +73,7 @@ const resultText = computed<string>(() => {
 });
 
 function handleHome() {
-  router.push("/");
+  router.push({ name: "home" });
 }
 
 function handleNewGame() {
@@ -98,7 +98,7 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div class="flex min-h-[70vh] w-full flex-col items-center justify-center px-0 py-4 sm:min-h-[80vh] sm:px-4">
+  <div class="flex min-h-[70vh] w-full flex-col items-center justify-center px-0 sm:min-h-[80vh] sm:px-4">
     <div v-if="error" class="p-4 mb-4 text-red-500 bg-red-100 rounded-lg animate-pulse">
       {{ error }}
     </div>
@@ -119,7 +119,7 @@ onBeforeUnmount(() => {
       <div class="mb-4">
         <TurnTimer v-if="gameStatus === GameStatus.Playing" :seconds="timer.secondsLeft.value" />
         <span v-else-if="gameStatus === GameStatus.Finished" class="flex items-center justify-center text-center text-base sm:text-lg">
-          Игра окончена
+          Game over
         </span>
       </div>
       <GameBoard

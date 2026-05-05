@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import type { GameBoard, PlayerSymbol, Winner } from "../../types/game";
-import { ArrowPathIcon } from "@heroicons/vue/24/solid";
 import { CardContainer, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 
 const props = defineProps<{
@@ -21,9 +20,6 @@ const emit = defineEmits<{
 
 <template>
   <div class="flex flex-col max-w-2xl mx-auto space-y-6">
-    <h1 class="font-semibold text-2xl text-center">
-      Game board
-    </h1>
     <CardContainer class="w-full">
       <CardHeader>
         <CardTitle class="text-center text-2xl font-bold">
@@ -60,13 +56,7 @@ const emit = defineEmits<{
         </div>
       </CardContent>
       <CardFooter>
-        <button
-          class="flex items-center justify-center cursor-pointer gap-2 text-white bg-violet-400 w-full rounded-md py-3 hover:bg-violet-500 hover:opacity-80 transition-opacity"
-          @click="emit('reset')"
-        >
-          <ArrowPathIcon class="w-6 h-6" />
-          New game
-        </button>
+        <slot name="footer" />
       </CardFooter>
     </CardContainer>
   </div>

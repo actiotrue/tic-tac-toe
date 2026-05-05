@@ -26,7 +26,7 @@ const gameId = computed<string>(() => {
 
 <template>
   <AppLayout>
-    <div class="w-full">
+    <div class="w-full mt-6">
       <GameVsPlayer v-if="mode === 'player'" />
       <GameVsAI v-else-if="mode === 'ai'" />
       <GameSpectator v-else-if="mode === 'spectate'" :key="gameId" :game-id="gameId" />

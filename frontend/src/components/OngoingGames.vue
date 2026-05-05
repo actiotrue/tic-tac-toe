@@ -19,9 +19,8 @@ const hasGames = computed<boolean>(() => games.value.length > 0);
 
 function watchGame(gameId: string) {
   router.push({
-    path: "/game",
+    name: "game-spectate",
     query: {
-      mode: "spectate",
       gameId,
     },
   });
@@ -113,7 +112,7 @@ onBeforeUnmount(() => {
             Started at {{ formatStartTime(game.startedAt) }}
           </p>
         </div>
-        <span class="shrink-0 text-xs font-medium uppercase tracking-wide text-violet-200">
+        <span class="shrink-0 text-xs font-medium uppercase tracking-wide">
           Watch
         </span>
       </button>
