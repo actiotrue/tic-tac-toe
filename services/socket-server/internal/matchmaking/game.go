@@ -251,7 +251,6 @@ func (g *Game) HandleMove(userId string, index int) {
 	g.Board[index] = symbol
 	isWin, winner, winningLine := g.checkWinner()
 	if isWin {
-		g.EndGameTime = time.Now()
 		g.ApplyFinish(winner, winningLine)
 		return
 	}
@@ -264,7 +263,6 @@ func (g *Game) HandleMove(userId string, index int) {
 		}
 	}
 	if isDraw {
-		g.EndGameTime = time.Now()
 		g.ApplyFinish("draw", nil)
 		return
 	}
@@ -276,6 +274,7 @@ func (g *Game) HandleMove(userId string, index int) {
 func (g *Game) ApplyFinish(winner string, line []int) {
 	g.Status = "finished"
 	g.Winner = winner
+	g.EndGameTime = time.Now()
 	g.BroadcastState()
 	g.BroadcastGameOver(winner, line)
 }

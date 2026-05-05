@@ -110,7 +110,18 @@ func (h *Hub) handleTimeout(game *matchmaking.Game) {
 	}
 	winner := game.OpponentOf(game.Turn)
 	game.ApplyFinish(winner, nil)
+
+	for _, player := range game.Players {
+		player.Client.SendJSON(dto.GameClosed{
+			Type: "gameClosed",
+			Payload: dto.GameClosedPayload{
+				Reason: "timeout",
+			},
+		})
+	}
+
 	h.notifyGameFinished(game.Id)
+	h.finishGame(game)
 }
 
 func (h *Hub) handleMessage(message client.Message) {
