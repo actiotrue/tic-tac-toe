@@ -12,7 +12,7 @@ import { getAIMove, randomPlayerSymbol } from "./utils";
 const playerSymbol = ref<PlayerSymbol>(randomPlayerSymbol());
 const aiSymbol = computed(() => (playerSymbol.value === "X" ? "O" : "X"));
 
-const { userId } = useAuth();
+const { userId, isLoggedIn } = useAuth();
 
 const { board, currentPlayer, durationInSeconds, result, makeMove, reset } = useTicTacToe();
 
@@ -39,7 +39,7 @@ watch(currentPlayer, (player) => {
 watch(
   () => result.value.winner,
   async (winner) => {
-    if (!winner)
+    if (!winner || !isLoggedIn)
       return;
     const gameResult = winner === "draw" ? "draw" : winner === "X" ? "x_won" : "o_won";
     const isPlayerX = playerSymbol.value === "X";

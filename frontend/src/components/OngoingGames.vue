@@ -19,9 +19,8 @@ const hasGames = computed<boolean>(() => games.value.length > 0);
 
 function watchGame(gameId: string) {
   router.push({
-    path: "/game",
+    name: "game-spectate",
     query: {
-      mode: "spectate",
       gameId,
     },
   });
@@ -53,12 +52,12 @@ onBeforeUnmount(() => {
       <LoadingSpinner size="sm" />
     </div>
 
-    <div v-else-if="error" class="space-y-3 rounded-md border border-red-500/20 bg-red-500/10 p-3">
-      <p class="text-sm text-red-200 text-center">
+    <div v-else-if="error" class="space-y-3 rounded-md border border-red-500/20 bg-red-500/20 p-3">
+      <p class="text-sm text-red-400 text-center">
         {{ error }}
       </p>
       <button
-        class="cursor-pointer bg-violet-400 px-3 py-2 text-sm text-white w-full"
+        class="cursor-pointer rounded-md bg-violet-400 px-3 py-2 text-sm text-white w-full hover:bg-violet-500"
         @click="connect"
       >
         Retry
@@ -78,7 +77,7 @@ onBeforeUnmount(() => {
       <button
         v-for="game in games"
         :key="game.gameId"
-        class="flex w-full items-center justify-between gap-3 rounded-md border border-white/10 bg-white/5 px-3 py-2 text-left transition hover:bg-white/10"
+        class="flex w-full items-center justify-between gap-3 cursor-pointer rounded-md border border-white/10 bg-white/5 px-3 py-2 text-left transition hover:bg-white/10"
         @click="watchGame(game.gameId)"
       >
         <div class="min-w-0">
@@ -90,7 +89,7 @@ onBeforeUnmount(() => {
                 :width="24"
                 :height="24"
               />
-              <span class="truncate text-sm font-medium text-white">
+              <span class="truncate text-sm font-medium">
                 {{ game.players[0]?.username || "Player X" }}
               </span>
             </div>
@@ -98,7 +97,7 @@ onBeforeUnmount(() => {
             <span class="text-xs text-gray-400 shrink-0">vs</span>
 
             <div class="flex items-center gap-1 min-w-0">
-              <span class="truncate text-sm font-medium text-white">
+              <span class="truncate text-sm font-medium">
                 {{ game.players[1]?.username || "Player O" }}
               </span>
               <AvatarImage
@@ -113,7 +112,7 @@ onBeforeUnmount(() => {
             Started at {{ formatStartTime(game.startedAt) }}
           </p>
         </div>
-        <span class="shrink-0 text-xs font-medium uppercase tracking-wide text-violet-200">
+        <span class="shrink-0 text-xs font-medium uppercase tracking-wide">
           Watch
         </span>
       </button>

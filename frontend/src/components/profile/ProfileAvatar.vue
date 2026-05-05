@@ -32,7 +32,7 @@ function onUpdate(event: Event) {
       :image-url="currentImageUrl"
       :width="130"
       :height="130"
-      class="h-24 w-24 rounded-full border-4 border-gray-600 sm:h-32.5 sm:w-32.5"
+      class="h-24 w-24 rounded-full border-3 border-primary sm:h-32.5 sm:w-32.5"
     />
     <button
       class="absolute cursor-pointer bottom-2 right-2 bg-purple-600 rounded-full p-2 hover:bg-purple-400"

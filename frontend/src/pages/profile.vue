@@ -178,16 +178,14 @@ async function updateUsername(newUsername: string) {
           <div class="flex items-center gap-2">
             <SparklesIcon class="w-6 h-6" /> Game Distribution
           </div>
-          <div class="">
-            <div class="mx-auto flex w-full items-center justify-center">
-              <StatisticChart
-                v-if="!isLoading && currentPlayer"
-                :wins="currentPlayer.wins"
-                :draws="currentPlayer.draws"
-                :losses="currentPlayer.losses"
-              />
-              <LoadingSpinner v-else-if="isLoading" size="md" />
-            </div>
+          <div class="bg-card rounded-xl mx-auto flex w-full items-center justify-center">
+            <StatisticChart
+              v-if="!isLoading && currentPlayer"
+              :wins="currentPlayer.wins"
+              :draws="currentPlayer.draws"
+              :losses="currentPlayer.losses"
+            />
+            <LoadingSpinner v-else-if="isLoading" size="md" />
           </div>
         </div>
       </div>

@@ -61,7 +61,7 @@ function nextQuestion() {
         <button
           v-for="(option, index) in currentQuestion.options"
           :key="index"
-          :class="{
+          class="bg-quiz-button" :class="{
             correct: selectedAnswer !== null && index === currentQuestion.correct,
             wrong: selectedAnswer === index && index !== currentQuestion.correct,
             disabled: selectedAnswer !== null,
@@ -78,7 +78,7 @@ function nextQuestion() {
             Correct! 🎉
           </p>
           <p v-else class="text-error">
-            Right answer is {{ currentQuestion.options[currentQuestion.correct] }}
+            ❌ Right answer is {{ currentQuestion.options[currentQuestion.correct] }}
           </p>
           <small class="text-sm">{{ currentQuestion.fact }}</small>
         </div>
@@ -90,11 +90,9 @@ function nextQuestion() {
 <style scoped>
 .quiz-container {
   padding: 20px;
-  background: #2a2a2a;
   border-radius: 12px;
   max-width: 400px;
   margin: 20px auto;
-  color: white;
 }
 
 .options {
@@ -106,15 +104,13 @@ function nextQuestion() {
 button {
   padding: 12px;
   border: 1px solid #444;
-  background: #333;
-  color: white;
   border-radius: 8px;
   cursor: pointer;
   transition: 0.3s;
 }
 
 button:hover:not(.disabled) {
-  background: #444;
+  background: #96999b;
 }
 
 button.correct {

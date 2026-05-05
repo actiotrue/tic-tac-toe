@@ -26,7 +26,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <span class="text-2xl font-bold text-white">
+  <span class="text-2xl font-bold">
     {{ formattedTime }}
   </span>
 </template>

@@ -92,7 +92,7 @@ onUnmounted(() => {
   <div class="w-full">
     <div class="flex flex-col">
       <div ref="containerRef" class="w-full overflow-x-auto overscroll-x-contain [touch-action:pan-x] max-h-120 overflow-y-auto scroll-smooth">
-        <div class="w-full overflow-x-auto">
+        <div class="w-full rounded-xl overflow-hidden overflow-x-auto ">
           <table class="w-full min-w-2xl border-separate border-spacing-0 text-left">
             <thead class="hidden md:table-header-group bg-gray-600 text-gray-300 uppercase text-xs font-semibold sticky top-0 z-10">
               <tr>
@@ -110,7 +110,7 @@ onUnmounted(() => {
                 </th>
               </tr>
             </thead>
-            <tbody class="divide-y divide-gray-700">
+            <tbody class="divide-y divide-gray-700 overflow-hidden">
               <tr v-if="games.length === 0">
                 <td colspan="4" class="px-4 py-10 text-center text-gray-500">
                   Нет недавних игр

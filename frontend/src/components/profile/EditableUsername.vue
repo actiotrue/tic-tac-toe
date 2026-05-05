@@ -56,7 +56,7 @@ function onBlur() {
   <div class="flex flex-wrap items-center justify-center gap-3 md:justify-start">
     <template v-if="!isEditing">
       <h1 class="break-all text-2xl font-bold sm:text-3xl">
-        {{ props.username }}
+        {{ username }}
       </h1>
       <button
         class="text-gray-400 hover:text-white transition cursor-pointer"
@@ -75,8 +75,8 @@ function onBlur() {
         v-model="newUsername"
         v-bind="newUsernameProps"
         type="text"
-        class="w-full px-3 py-2 border rounded-md bg-gray-700 text-white"
-        :disabled="props.loading"
+        class="w-full px-3 py-2 border rounded-md bg-gray-500 text-white"
+        :disabled="loading"
         @keyup.esc="isEditing = false"
         @blur="onBlur"
       >

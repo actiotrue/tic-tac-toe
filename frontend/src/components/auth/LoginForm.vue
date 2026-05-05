@@ -49,7 +49,7 @@ const onSubmit = handleSubmit(async (values) => {
         v-bind="usernameProps"
         type="text"
         placeholder="Enter username"
-        class="w-full px-3 py-2 border rounded-md bg-gray-700 text-white focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+        class="w-full px-3 py-2 border rounded-md text-white focus:ring-2 focus:ring-blue-500 outline-none transition-all"
         :class="{ 'border-red-500': errors.username }"
       >
       <span v-if="errors.username" class="text-red-500 text-xs mt-1 block">
@@ -63,7 +63,7 @@ const onSubmit = handleSubmit(async (values) => {
         v-bind="passwordProps"
         type="password"
         placeholder="••••••••"
-        class="w-full px-3 py-2 border rounded-md bg-gray-700 text-white focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+        class=" w-full px-3 py-2 border rounded-md focus:ring-2 text-white focus:ring-blue-500 outline-none transition-all"
         :class="{ 'border-red-500': errors.password }"
       >
       <span v-if="errors.password" class="text-red-500 text-xs mt-1 block">

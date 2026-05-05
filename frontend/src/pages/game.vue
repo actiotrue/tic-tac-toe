@@ -1,18 +1,21 @@
 <script lang="ts" setup>
 import { computed } from "vue";
 import { useRoute } from "vue-router";
-import GameVsAI from "@/components/game/GameVsAI.vue";
 import GameSpectator from "@/components/game/GameSpectator.vue";
+import GameVsAI from "@/components/game/GameVsAI.vue";
 import GameVsPlayer from "@/components/game/GameVsPlayer.vue";
 import AppLayout from "@/layouts/AppLayout.vue";
 
-type GameMode = "pve" | "pvp" | "spectate";
+type GameMode = "ai" | "player" | "spectate";
 
 const route = useRoute();
 
 const mode = computed<GameMode>(() => {
-  const m = route.query.mode;
-  return m === "pvp" || m === "pve" || m === "spectate" ? m : "pve";
+  if (route.path.includes("player"))
+    return "player";
+  if (route.path.includes("spectate"))
+    return "spectate";
+  return "ai";
 });
 
 const gameId = computed<string>(() => {
@@ -23,10 +26,10 @@ const gameId = computed<string>(() => {
 
 <template>
   <AppLayout>
-    <div class="w-full">
-      <GameVsPlayer v-if="mode === 'pvp'" />
-      <GameVsAI v-else-if="mode === 'pve'" />
-      <GameSpectator v-else :key="gameId" :game-id="gameId" />
+    <div class="w-full mt-6">
+      <GameVsPlayer v-if="mode === 'player'" />
+      <GameVsAI v-else-if="mode === 'ai'" />
+      <GameSpectator v-else-if="mode === 'spectate'" :key="gameId" :game-id="gameId" />
     </div>
   </AppLayout>
 </template>

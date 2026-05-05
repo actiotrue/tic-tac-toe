@@ -113,13 +113,13 @@ func (s *Server) HandleSpectatorWs(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) HandleOngoingGamesSSE(w http.ResponseWriter, r *http.Request) {
-	_, ok := s.authenticateTicket(w, r)
-	if !ok {
-		return
-	}
-
 	if !s.setCorsHeaders(w, r) {
 		http.Error(w, "Origin not allowed", http.StatusForbidden)
+		return
+	}
+	
+	_, ok := s.authenticateTicket(w, r)
+	if !ok {
 		return
 	}
 

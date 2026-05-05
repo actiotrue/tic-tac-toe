@@ -1,12 +1,19 @@
 @import "tailwindcss";
 
+@theme{
+  --color-primary: var(--color-violet-400);
+}
+
 :root {
   color-scheme: light dark;
 
-  --bg-primary: #e2f1f6;
+  --bg-primary: #ffffff;
   --text-primary: #000000;
   --border-color: #d1d7e3;
   --border-color-transparent: #555c6950;
+  --card-bg: var(--color-gray-400);
+  --quiz-bg: var(--color-gray-200);
+  --quiz-button-bg: var(--color-gray-100);
 }
 
 :root[data-theme="light"] {
@@ -14,6 +21,9 @@
   --text-primary: #ffffff;
   --border-color: #020b1a;
   --border-color-transparent: #86909f50;
+  --card-bg: var(--color-gray-800);
+  --quiz-bg: #2a2a2a;
+  --quiz-button-bg: #2a2a2a;
 }
 
 body {
@@ -23,7 +33,6 @@ body {
   color: var(--text-primary);
   transition:
     background-color 0.3s,
-    color 0.3s;
 }
 
 *,
@@ -57,4 +66,16 @@ canvas {
 
 .border-custom-transparent {
   border-color: var(--border-color-transparent);
+}
+
+.bg-card {
+  background-color: color-mix(in srgb, var(--card-bg), transparent 60%);
+}
+
+.bg-quiz {
+  background-color: var(--quiz-bg);
+}
+
+.bg-quiz-button {
+  background-color: var(--quiz-button-bg);
 }

@@ -8,7 +8,7 @@ import { useAuthModal } from "@/composables/useAuthModal";
 import { useAuth } from "@/store/auth.store";
 
 const authStore = useAuth();
-const { openAuthModal } = useAuthModal();
+const { openModal } = useAuthModal();
 
 const isMobileMenuOpen = ref(false);
 
@@ -32,12 +32,12 @@ async function logout() {
           <div class="hidden items-center space-x-4 md:flex">
             <ThemeSwitch />
             <template v-if="!authStore.isLoggedIn">
-              <button class="cursor-pointer px-3 py-2 text-sm hover:text-gray-400" @click="openAuthModal('login')">
+              <button class="cursor-pointer px-3 py-2 text-sm hover:text-gray-400" @click="openModal('login')">
                 Log in
               </button>
               <button
                 class="transform cursor-pointer rounded-lg px-3 py-2 text-sm font-medium shadow-md duration-300 hover:-translate-y-0.5 hover:shadow-lg"
-                @click="openAuthModal('signup')"
+                @click="openModal('signup')"
               >
                 Sign up
               </button>
@@ -112,13 +112,13 @@ async function logout() {
             <template v-if="!authStore.isLoggedIn">
               <button
                 class="block w-full rounded-xl px-4 py-3 text-left font-medium transition-colors active:bg-gray-200 dark:active:bg-gray-700"
-                @click="openAuthModal('login')"
+                @click="openModal('login')"
               >
                 Log in
               </button>
               <button
                 class="block w-full rounded-xl px-4 py-3 text-left font-medium transition-colors active:bg-gray-200 dark:active:bg-gray-700"
-                @click="openAuthModal('signup')"
+                @click="openModal('signup')"
               >
                 Sign up
               </button>
@@ -142,7 +142,7 @@ async function logout() {
         </div>
       </div>
     </nav>
-    <main class="grow px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
+    <main class="grow px-4 py-4">
       <div class="mx-auto w-full max-w-6xl min-w-0">
         <slot />
       </div>

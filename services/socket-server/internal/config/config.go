@@ -11,5 +11,9 @@ type Config struct {
 }
 
 func (c *Config) ParseCors() []string {
-	return strings.Split(c.CorsOrigins, ",")
+    parts := strings.Split(c.CorsOrigins, ",")
+    for i := range parts {
+        parts[i] = strings.TrimSpace(parts[i])
+    }
+    return parts
 }

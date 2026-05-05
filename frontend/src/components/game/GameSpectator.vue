@@ -65,7 +65,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="flex min-h-[70vh] w-full flex-col items-center justify-center px-0 py-4 sm:min-h-[80vh] sm:px-4">
+  <div class="flex min-h-[70vh] w-full flex-col items-center justify-center px-0 sm:min-h-[80vh] sm:px-4">
     <div v-if="error" class="mb-4 rounded-lg bg-red-100 p-4 text-red-500">
       {{ error }}
     </div>
@@ -85,7 +85,7 @@ onMounted(() => {
 
       <GameBoard
         :board="game.board.value"
-        :current-player="game.currentPlayerSymbol.value"
+        :current-player="game.currentPlayerSymbol.value || 'X'"
         :winner="game.winner.value"
         :winning-line="game.winningLine.value ?? []"
         :disabled="true"
@@ -118,7 +118,7 @@ onMounted(() => {
 
       <div class="mt-6 flex justify-center">
         <button
-          class="cursor-pointer rounded-md bg-violet-400 px-4 py-2 text-sm text-white"
+          class="cursor-pointer rounded-md bg-violet-400 px-4 py-2 text-sm text-white hover:bg-violet-500"
           @click="goHome"
         >
           Back to home

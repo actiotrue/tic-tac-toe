@@ -11,13 +11,19 @@ import { useAuth } from "@/store/auth.store";
 const authStore = useAuth();
 
 const router = useRouter();
-const { openAuthModal } = useAuthModal();
+const { openModal } = useAuthModal();
 
-function startGame(mode: "pvp" | "pve") {
-  router.push({
-    path: "game",
-    query: { mode },
-  });
+function startGame(mode: "ai" | "player") {
+  if (mode === "ai") {
+    router.push({
+      name: "game-ai",
+    });
+  }
+  else if (mode === "player") {
+    router.push({
+      name: "game-player",
+    });
+  }
 }
 </script>
 
@@ -36,15 +42,15 @@ function startGame(mode: "pvp" | "pve") {
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 mx-auto w-full max-w-2xl">
           <button
-            class="flex w-full items-center cursor-pointer justify-center gap-3 rounded-md bg-violet-400 px-4 py-3 text-base text-white sm:px-8 sm:text-lg"
-            @click="startGame('pvp')"
+            class="flex w-full items-center cursor-pointer justify-center gap-3 rounded-md bg-violet-400 px-4 py-3 text-base text-white sm:px-8 sm:text-lg hover:bg-violet-500"
+            @click="startGame('player')"
           >
             <PlayIcon class="w-6 h-6" />
             <span class="text-center">Play against people</span>
           </button>
           <button
-            class="flex w-full items-center justify-center cursor-pointer gap-3 rounded-md bg-violet-400 px-4 py-3 text-base text-white sm:px-8 sm:text-lg"
-            @click="startGame('pve')"
+            class="flex w-full items-center justify-center cursor-pointer gap-3 rounded-md bg-violet-400 px-4 py-3 text-base text-white sm:px-8 sm:text-lg hover:bg-violet-500"
+            @click="startGame('ai')"
           >
             <PlayIcon class="w-6 h-6" />
             <span class="text-center">Play against AI</span>
@@ -59,11 +65,11 @@ function startGame(mode: "pvp" | "pve") {
                 <span>Ongoing games</span>
               </div>
               <p class="text-gray-400 text-sm">
-                See how other players play
+                Watch other players games
               </p>
             </div>
 
-            <div class="rounded-xl bg-gray-800/40 p-4">
+            <div class="rounded-xl bg-card p-4">
               <OngoingGames />
             </div>
           </div>
@@ -78,14 +84,14 @@ function startGame(mode: "pvp" | "pve") {
               </p>
             </div>
 
-            <div class="rounded-xl bg-gray-800/40 p-4 space-y-4">
+            <div class="rounded-xl bg-card p-4 space-y-4">
               <p>
                 Sign up to save your progress, track your wins, and climb the leaderboard!
               </p>
 
               <button
-                class="w-full py-2 rounded-md bg-violet-400 text-white transition hover:bg-violet-500"
-                @click="openAuthModal('signup')"
+                class="w-full py-2 cursor-pointer rounded-md bg-violet-400 text-white transition hover:bg-violet-500"
+                @click="openModal('signup')"
               >
                 Get Started
               </button>
@@ -97,7 +103,7 @@ function startGame(mode: "pvp" | "pve") {
               <TrophyIcon class="w-6 h-6 text-yellow-400" />
               <span>Leaderboard</span>
             </div>
-            <div class="rounded-xl bg-gray-800/40 p-4">
+            <div class="rounded-xl bg-card p-4">
               <GameLeaderboard />
             </div>
           </div>

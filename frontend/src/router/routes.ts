@@ -6,11 +6,27 @@ export default [
   },
   {
     path: "/game",
-    name: "game",
     component: () => import("@/pages/game.vue"),
-    meta: {
-      requiresAuth: true,
-    },
+    children: [
+      {
+        path: "ai",
+        name: "game-ai",
+        component: () => import("@/pages/game.vue"),
+        meta: { requiresAuth: false },
+      },
+      {
+        path: "player",
+        name: "game-player",
+        component: () => import("@/pages/game.vue"),
+        meta: { requiresAuth: true },
+      },
+      {
+        path: "spectate",
+        name: "game-spectate",
+        component: () => import("@/pages/game.vue"),
+        meta: { requiresAuth: false },
+      },
+    ],
   },
   {
     path: "/profile/me",
