@@ -1,7 +1,8 @@
+from pathlib import Path
 from typing import Any
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
-from typing_extensions import Annotated
+from typing import Annotated
 from pydantic import AnyUrl, BeforeValidator, computed_field
 
 
@@ -18,7 +19,7 @@ class Settings(BaseSettings):
     DB_PORT: int = 5432
     DB_USER: str = "postgres"
     DB_PASSWORD: str = "postgres"
-    DB_NAME: str = "tic-tac-toe"
+    DB_NAME: str = "tic_tac_toe"
     
     @computed_field
     @property
@@ -54,8 +55,8 @@ class Settings(BaseSettings):
         return [str(origin).rstrip("/") for origin in self.BACKEND_CORS_ORIGINS]
 
     model_config = SettingsConfigDict(
-        env_ignore_empty=True, extra="allow", env_file="../.env"
+        env_ignore_empty=True, extra="allow", env_file=Path(__file__).resolve().parents[4] / ".env"
     )
 
 
-settings = Settings()
+settings = Settings() # pyright: ignore[reportCallIssue]
