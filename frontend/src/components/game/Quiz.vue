@@ -39,7 +39,7 @@ function handleAnswer(originalIndex: number) {
 
   setTimeout(() => {
     nextQuestion();
-  }, 3000);
+  }, 5000);
 }
 
 function nextQuestion() {
