@@ -82,7 +82,6 @@ export function useOngoingGames() {
       eventSource.onerror = () => {
         isLoading.value = false;
         error.value = "Failed to receive active games list";
-        eventSource.close();
         source.value = null;
       };
 
