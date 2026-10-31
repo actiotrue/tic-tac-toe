@@ -44,7 +44,7 @@ export function useOngoingGames() {
 
     try {
       const ticket = await getWsTicket();
-      const streamUrl = `${import.meta.env.VITE_EVENTS_URL}/ws/ongoing-games?ticket=${ticket}`;
+      const streamUrl = `${import.meta.env.VITE_EVENTS_URL}/ongoing-games?ticket=${ticket}`;
       const eventSource = new EventSource(streamUrl);
 
       eventSource.addEventListener("activeGames", (event) => {
