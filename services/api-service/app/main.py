@@ -30,16 +30,6 @@ app = FastAPI(lifespan=lifespan)
 app.include_router(prefix="/api/v1", router=api_router)
 
 
-if settings.all_cors_origins:
-    app.add_middleware(
-        CORSMiddleware,
-        allow_origins=settings.all_cors_origins,
-        allow_credentials=True,
-        allow_methods=["*"],
-        allow_headers=["*"],
-    )
-
-
 @app.middleware("http")
 async def add_process_time_header(request: Request, call_next):
     request_id = str(uuid.uuid7())
@@ -54,6 +44,16 @@ async def add_process_time_header(request: Request, call_next):
         f"Status: {response.status_code} | Time {process_time:.2f}ms"
     )
     return response
+
+
+if settings.all_cors_origins:
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=settings.all_cors_origins,
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
 
 
 @app.exception_handler(EntityNotFound)
