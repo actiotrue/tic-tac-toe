@@ -10,4 +10,7 @@ COPY . .
 
 RUN bun run build-only
 
-CMD ["sh", "-c", "cp -rt /output /app/dist/*"]
+
+FROM scratch AS export-stage
+
+COPY --from=build-stage /app/dist /

@@ -53,13 +53,14 @@ services:
       - app-network
 
   frontend:
-    build: ./frontend
+    build: 
+      context: ./frontend
+      output: type=local,dest=/var/www/tic_tac_toe/
     container_name: vue-frontend
     restart: "no"
     env_file:
       - .env
-    volumes:    
-      - /var/www/tic_tac_toe/:/output
+
 
   db:
     image: postgres:18-alpine
