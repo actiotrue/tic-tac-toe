@@ -1,0 +1,111 @@
+services:
+  fastapi:
+    build: ./services/api-service
+    container_name: fastapi-service
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      PYTHONPATH: /app    
+      DATABASE_URL: postgresql://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}
+      DB_HOST: db
+      DB_PORT: ${DB_PORT}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_NAME: ${DB_NAME}
+
+      REDIS_HOST: redis
+      REDIS_PORT: ${REDIS_PORT}
+      
+      INTERNAL_SERVICE_KEY: ${INTERNAL_SERVICE_KEY}
+      CLOUDINARY_BASE_IMAGE_PUBLIC_ID: ${CLOUDINARY_BASE_IMAGE_PUBLIC_ID}
+      REFRESH_TOKEN_EXPIRE_DAYS: ${REFRESH_TOKEN_EXPIRE_DAYS}
+      ACCESS_TOKEN_EXPIRE_MINUTES: ${ACCESS_TOKEN_EXPIRE_MINUTES}
+      ALGORITHM: ${ALGORITHM}
+      SECRET_KEY: ${SECRET_KEY}
+    volumes:
+      - /app/__pycache__
+    ports:
+      - "127.0.0.1:8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    networks:
+      - app-network
+
+  go-service:
+    env_file:
+      - .env
+    build: ./services/socket-server
+    container_name: go-service
+    restart: unless-stopped
+    environment:
+      GIN_MODE: release
+      REDIS_ADDR: redis:6379
+      FASTAPI_URL: http://fastapi:8000
+    ports:
+      - "127.0.0.1:8080:8080"
+    depends_on:
+      - redis
+    networks:
+      - app-network
+
+  frontend:
+    build: ./frontend
+    container_name: vue-frontend
+    restart: "no"
+    env_file:
+      - .env
+    volumes:    
+      - /var/www/tic_tac_toe/dist:/output
+
+  db:
+    image: postgres:18-alpine
+    container_name: postgres-db
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      POSTGRES_USER: ${DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
+      POSTGRES_DB: ${DB_NAME:-tic_tac_toe}
+    volumes:
+      - postgres_data:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - app-network
+
+  migration:
+    image: amacneil/dbmate
+    env_file:
+      - .env
+    networks:
+      - app-network
+    volumes:
+      - ./services/api-service/db/migrations:/migrations
+    environment:
+      DATABASE_URL: postgres://${DB_USER}:${DB_PASSWORD}@db:${DB_PORT}/${DB_NAME}?sslmode=disable
+    command: ["--migrations-dir", "/migrations", "up"]
+    depends_on:
+        db:
+          condition: service_healthy
+
+  redis:
+    image: redis:7-alpine
+    container_name: redis-cache
+    restart: unless-stopped
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
