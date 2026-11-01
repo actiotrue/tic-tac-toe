@@ -53,16 +53,18 @@ services:
       - app-network
 
   frontend:
-    build: ./frontend
+    build: 
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        - VITE_API_URL=${VITE_API_URL}
+        - VITE_WS_URL=${VITE_WS_URL}
+        - VITE_EVENTS_URL=${VITE_EVENTS_URL}
+        - VITE_CLOUDINARY_NAME=${VITE_CLOUDINARY_NAME}
+        - VITE_CLOUDINARY_API_SECRET=${VITE_CLOUDINARY_API_SECRET}
+        - VITE_CLOUDINARY_API_KEY=${VITE_CLOUDINARY_API_KEY}
     container_name: vue-frontend
     restart: "no"
-    args:
-      - VITE_API_URL=${VITE_API_URL}
-      - VITE_WS_URL=${VITE_WS_URL}
-      - VITE_EVENTS_URL=${VITE_EVENTS_URL}
-      - VITE_CLOUDINARY_NAME=${VITE_CLOUDINARY_NAME}
-      - VITE_CLOUDINARY_API_SECRET=${VITE_CLOUDINARY_API_SECRET}
-      - VITE_CLOUDINARY_API_KEY=${VITE_CLOUDINARY_API_KEY}
     volumes:
       - /var/www/tic_tac_toe/dist:/output
 
