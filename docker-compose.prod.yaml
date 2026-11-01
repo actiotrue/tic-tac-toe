@@ -59,7 +59,7 @@ services:
     env_file:
       - .env
     volumes:    
-      - /var/www/tic_tac_toe/:/output
+      - /var/www/tic_tac_toe/dist:/output
 
   db:
     image: postgres:18-alpine
